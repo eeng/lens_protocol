@@ -1,0 +1,5 @@
+require 'lens_protocol/version'
+require 'lens_protocol/oma/record'
+require 'lens_protocol/oma/message'
+require 'lens_protocol/oma/parser'
+require 'lens_protocol/errors'

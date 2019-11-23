@@ -1,4 +1,4 @@
-module VisionCouncil
+module LensProtocol
   module OMA
     RSpec.describe Parser do
       context 'parse' do

@@ -1,4 +1,4 @@
-module VisionCouncil
+module LensProtocol
   module OMA
     class Record
       attr_reader :label, :unparsed_value

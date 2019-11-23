@@ -1,5 +1,5 @@
 require "bundler/setup"
-require "vision_council"
+require "lens_protocol"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure

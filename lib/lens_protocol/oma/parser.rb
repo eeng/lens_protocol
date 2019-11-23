@@ -1,4 +1,4 @@
-module VisionCouncil
+module LensProtocol
   module OMA
     class Parser
       def self.parse oma_str

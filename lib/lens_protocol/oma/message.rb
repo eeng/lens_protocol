@@ -1,4 +1,4 @@
-module VisionCouncil
+module LensProtocol
   module OMA
     class Message
       attr_reader :records

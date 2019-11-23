@@ -1,4 +1,4 @@
 source "https://rubygems.org"
 
-# Specify your gem's dependencies in vision_council.gemspec
+# Specify your gem's dependencies in lens_protocol.gemspec
 gemspec
