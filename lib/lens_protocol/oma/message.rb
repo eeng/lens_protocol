@@ -7,9 +7,17 @@ module LensProtocol
         @records = records
       end
 
+      def [] label
+        records_hash[label]
+      end
+
       def to_hash
-        @records.each_with_object({}) do |record, hash|
-          hash[record.label] = record.unparsed_value
+        Hash[*records_hash.flat_map { |label, record| [label, record.values] }]
+      end
+
+      def records_hash
+        @records_hash ||= @records.each_with_object({}) do |record, hash|
+          hash[record.label] = record
         end
       end
     end

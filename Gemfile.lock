@@ -62,9 +62,10 @@ PLATFORMS
 DEPENDENCIES
   bundler (~> 2.0)
   guard-rspec
+  lens_protocol!
+  pry
   rake (~> 10.0)
   rspec (~> 3.0)
-  lens_protocol!
 
 BUNDLED WITH
    2.0.2

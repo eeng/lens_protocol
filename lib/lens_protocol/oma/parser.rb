@@ -6,14 +6,15 @@ module LensProtocol
       end
 
       def parse oma_str
-        Message.new records: normalize_line_endings(oma_str).split("\n").map { |line| parse_line line }
+        records = normalize_line_endings(oma_str).split("\n").map { |line| parse_line line }
+        Message.new records: records
       end
 
       private
 
       def parse_line line
         label, value = line.split('=')
-        Record.new label: label, unparsed_value: value
+        Record.new label: label, raw_value: value
       end
 
       def normalize_line_endings str
