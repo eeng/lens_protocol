@@ -35,7 +35,7 @@ module LensProtocol
           expect(Parser.parse('JOB=').values_of('JOB')).to eq []
         end
 
-        it 'parsing of tracing datasets' do
+        it 'parsing of tracing datasets of both sides' do
           message = Parser.parse <<~OMA
             TRCFMT=1;10;E;R;P
             R=2416;2410;2425;2429;2433
@@ -53,6 +53,25 @@ module LensProtocol
             'R' => [
               [2416, 2410, 2425, 2429, 2433, 2459, 2464, 2469, 2473, 2478],
               [2476, 2478, 2481, 2483, 2486, 2503, 2506, 2510, 2513, 2516]
+            ]
+          )
+        end
+
+        it 'parsing of tracing datasets of one side' do
+          message = Parser.parse <<~OMA
+            TRCFMT=1;10;E;R;P
+            R=2416;2410;2425;2429;2433
+            R=2459;2464;2469;2473;2478
+          OMA
+
+          expect(message.to_hash).to eq(
+            'TRCFMT' => [
+              %w[1 10 E R P],
+              %w[]
+            ],
+            'R' => [
+              [2416, 2410, 2425, 2429, 2433, 2459, 2464, 2469, 2473, 2478],
+              []
             ]
           )
         end
