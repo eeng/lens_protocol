@@ -5,10 +5,10 @@ module LensProtocol
         it 'expects a string and returns the parsed message' do
           message = Parser.parse <<~OMA
             REQ=FIL
-            SPH=2.50;1.25
+            JOB=123
           OMA
           expect(message).to be_a(Message)
-          expect(message.records.map(&:label)).to eq %w[REQ SPH]
+          expect(message.to_hash).to eq 'REQ' => ['FIL'], 'JOB' => ['123']
         end
 
         it 'should tolerate different line separators' do
@@ -34,26 +34,26 @@ module LensProtocol
           expect(Parser.parse('IPD=;33')['IPD'].values).to eq [nil, 33]
         end
 
-        it 'chiral records can be accessed by side' do
+        skip 'parsing of tracing datasets' do
           message = Parser.parse <<~OMA
-            SPH=1.25;-2.00
-            CYL=-1.50;3.75
+            TRCFMT=1;10;E;R;P
+            R=2416;2410;2425;2429;2433
+            R=2459;2464;2469;2473;2478
+            TRCFMT=1;20;E;L;P
+            R=2476;2478;2481;2483;2486
+            R=2503;2506;2510;2513;2516
           OMA
-          expect(message['SPH'].right_value).to eq 1.25
-          expect(message['SPH'].left_value).to eq -2.0
-          expect(message['CYL'].right_value).to eq -1.5
-          expect(message['CYL'].left_value).to eq 3.75
-        end
 
-        skip "some records are chiral but with each side's raw value appearing in a separate line" do
-          message = Parser.parse <<~OMA
-            TRCFMT=1;1000;E;R;P
-            TRCFMT=1;1000;E;L;P
-          OMA
-          expect(message['TRCFMT'].values).to eq [
-            %w[1 1000 E R P],
-            %w[1 1000 E L P]
-          ]
+          expect(message.to_hash).to eq(
+            'TRCFMT' => [
+              %w[1 10 E R P],
+              %w[1 10 E L P]
+            ],
+            'R' => [
+              [2416, 2420, 2425, 2429, 2433, 2459, 2464, 2469, 2473, 2478],
+              [2476, 2478, 2481, 2483, 2486, 2503, 2506, 2510, 2513, 2516]
+            ]
+          )
         end
       end
     end
