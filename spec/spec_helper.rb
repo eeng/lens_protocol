@@ -1,5 +1,6 @@
 require 'bundler/setup'
 require 'pry-byebug'
+require 'nokogiri'
 require 'lens_protocol'
 
 RSpec.configure do |config|
