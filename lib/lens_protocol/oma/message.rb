@@ -1,19 +1,33 @@
 module LensProtocol
   module OMA
     class Message
-      attr_reader :context
-
       def initialize
         @records = {}
         @context = {}
       end
 
-      def []= label, record
-        @records[label] = record
+      def add_record label, values
+        @records[label] = Record.new(label: label, values: values)
+        self
       end
 
-      def [] label
-        @records[label]
+      def add_record_side_values label, side, values
+        @records[label] ||= Record.new(label: label, values: [[], []])
+        @records[label].values[side].concat values
+        self
+      end
+
+      def set_context key, value
+        @context[key] = value
+        self
+      end
+
+      def values_of label
+        @records[label].values
+      end
+
+      def context key
+        @context[key]
       end
 
       def to_hash

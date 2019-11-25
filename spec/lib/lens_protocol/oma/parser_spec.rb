@@ -23,16 +23,16 @@ module LensProtocol
             DBL=1.25
             NPD=30.50;-30.75
           OMA
-          expect(message['FTYP'].values).to eq [1]
-          expect(message['ETYP'].values).to eq [2]
-          expect(message['DBL'].values).to eq [1.25]
-          expect(message['NPD'].values).to eq [30.5, -30.75]
+          expect(message.values_of('FTYP')).to eq [1]
+          expect(message.values_of('ETYP')).to eq [2]
+          expect(message.values_of('DBL')).to eq [1.25]
+          expect(message.values_of('NPD')).to eq [30.5, -30.75]
         end
 
         it 'should preserve empty values' do
-          expect(Parser.parse('IPD=33;')['IPD'].values).to eq [33, nil]
-          expect(Parser.parse('IPD=;33')['IPD'].values).to eq [nil, 33]
-          expect(Parser.parse('JOB=')['JOB'].values).to eq []
+          expect(Parser.parse('IPD=33;').values_of('IPD')).to eq [33, nil]
+          expect(Parser.parse('IPD=;33').values_of('IPD')).to eq [nil, 33]
+          expect(Parser.parse('JOB=').values_of('JOB')).to eq []
         end
 
         it 'parsing of tracing datasets' do

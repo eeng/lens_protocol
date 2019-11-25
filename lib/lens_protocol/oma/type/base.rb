@@ -7,8 +7,7 @@ module LensProtocol
         end
 
         def parse message, label, values, _opts
-          message[label] = Record.new(label: label, values: values)
-          message
+          message.add_record label, values
         end
       end
     end

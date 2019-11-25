@@ -16,12 +16,7 @@ module LensProtocol
       def parse_line message, line
         label, data = line.split('=')
         values = data.to_s.split(';', -1)
-        type = TYPES[label]
-        message = type.parse(message, label, values, line: line)
-        unless message.is_a?(Message)
-          raise ParsingError, line, "#{type.class}#parse method should return the message. Got #{message.class}."
-        end
-        message
+        TYPES[label].parse(message, label, values, line: line)
       end
 
       def normalize_line_endings str

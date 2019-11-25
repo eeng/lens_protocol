@@ -1,10 +1,7 @@
 module LensProtocol
   module OMA
     class Record
-      attr_reader :label
-
-      # An array of coerced values (the ones separated with semicolon)
-      attr_reader :values
+      attr_reader :label, :values
 
       def initialize label:, values:
         @label = label
