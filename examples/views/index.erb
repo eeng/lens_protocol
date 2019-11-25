@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <link rel="stylesheet" href="styles.css">
+    <title>SVG Demo</title>
+  </head>
+  <body>
+    <% files_and_messages.each do |(filename, message)| %>
+      <div><%= filename %></div>
+
+      <div class="lenses-container">
+        <% message.to_svg.map do |svg| %>
+          <div class="lens">
+            <%= svg %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </body>
+</html>

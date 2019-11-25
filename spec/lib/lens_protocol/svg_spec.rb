@@ -11,6 +11,12 @@ module LensProtocol
         right_svg, left_svg = SVG.from_message(message).map { |svg| parse_xml svg }
         expect(right_svg.css('svg').size).to eq 1
         expect(left_svg.css('svg').size).to eq 1
+
+        message = OMA::Message.from_hash('R' => [[], [2476]])
+        expect(SVG.from_message(message).size).to eq 1
+
+        message = OMA::Message.from_hash('R' => [[2476], []])
+        expect(SVG.from_message(message).size).to eq 1
       end
 
       it 'should draw a polygon with the points Y coordinate inverted' do

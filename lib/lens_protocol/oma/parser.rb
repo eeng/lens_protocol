@@ -5,6 +5,10 @@ module LensProtocol
         new.parse oma_str
       end
 
+      def self.parse_file file_path
+        parse File.read file_path
+      end
+
       def parse oma_str
         normalize_line_endings(oma_str)
           .split("\n")

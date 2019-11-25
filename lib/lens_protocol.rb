@@ -1,3 +1,4 @@
+require 'nokogiri'
 require 'lens_protocol/version'
 require 'lens_protocol/errors'
 require 'lens_protocol/oma/record'

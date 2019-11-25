@@ -56,8 +56,9 @@ module LensProtocol
         radiuses_to_polar(radiuses).map { |(a, r)| [r * Math.cos(a), r * Math.sin(a)].map { |v| v.round 2 } }
       end
 
-      def to_svg
-        SVG.from_message self
+      # @return and array of SVG strings, one for each side
+      def to_svg **opts
+        SVG.from_message self, **opts
       end
     end
   end
