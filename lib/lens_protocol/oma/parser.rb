@@ -15,11 +15,11 @@ module LensProtocol
 
       def parse_line message, line
         label, data = line.split('=')
-        values = data.split(';', -1)
+        values = data.to_s.split(';', -1)
         type = TYPES[label]
-        message = type.parse(message, label, values)
+        message = type.parse(message, label, values, line: line)
         unless message.is_a?(Message)
-          raise ParsingError, "#{type.class}#parse method should return the message. Got #{message.class}."
+          raise ParsingError, line, "#{type.class}#parse method should return the message. Got #{message.class}."
         end
         message
       end

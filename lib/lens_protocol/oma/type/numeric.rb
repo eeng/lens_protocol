@@ -7,7 +7,7 @@ module LensProtocol
           @decimals = decimals
         end
 
-        def parse message, label, values
+        def parse message, label, values, _opts
           values = values.map { |str| Float(str) rescue nil }
           super
         end

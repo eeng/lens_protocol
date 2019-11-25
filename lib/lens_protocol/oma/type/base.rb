@@ -6,7 +6,7 @@ module LensProtocol
           @chiral = chiral
         end
 
-        def parse message, label, values
+        def parse message, label, values, _opts
           message[label] = Record.new(label: label, values: values)
           message
         end

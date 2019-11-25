@@ -32,6 +32,7 @@ module LensProtocol
         it 'should preserve empty values' do
           expect(Parser.parse('IPD=33;')['IPD'].values).to eq [33, nil]
           expect(Parser.parse('IPD=;33')['IPD'].values).to eq [nil, 33]
+          expect(Parser.parse('JOB=')['JOB'].values).to eq []
         end
 
         it 'parsing of tracing datasets' do
