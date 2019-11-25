@@ -59,7 +59,9 @@ module LensProtocol
       'BVD' => Type::Integer.new(chiral: true),
       'PANTO' => Type::Integer.new(chiral: true),
       'ZTILT' => Type::Integer.new(chiral: true),
-      '_CTO' => Type::Integer.new(chiral: true)
+      '_CTO' => Type::Integer.new(chiral: true),
+      'TRCFMT' => Type::Trcfmt.new(chiral: true),
+      'R' => Type::R.new(chiral: true),
     )
   end
 end

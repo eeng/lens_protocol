@@ -1,4 +1,7 @@
 module LensProtocol
-  class Error < StandardError; end
-  # Your code goes here...
+  class Error < StandardError
+  end
+
+  class ParsingError < Error
+  end
 end

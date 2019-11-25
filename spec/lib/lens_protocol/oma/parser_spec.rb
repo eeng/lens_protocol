@@ -34,12 +34,12 @@ module LensProtocol
           expect(Parser.parse('IPD=;33')['IPD'].values).to eq [nil, 33]
         end
 
-        skip 'parsing of tracing datasets' do
+        it 'parsing of tracing datasets' do
           message = Parser.parse <<~OMA
             TRCFMT=1;10;E;R;P
             R=2416;2410;2425;2429;2433
             R=2459;2464;2469;2473;2478
-            TRCFMT=1;20;E;L;P
+            TRCFMT=1;10;E;L;P
             R=2476;2478;2481;2483;2486
             R=2503;2506;2510;2513;2516
           OMA
@@ -50,10 +50,16 @@ module LensProtocol
               %w[1 10 E L P]
             ],
             'R' => [
-              [2416, 2420, 2425, 2429, 2433, 2459, 2464, 2469, 2473, 2478],
+              [2416, 2410, 2425, 2429, 2433, 2459, 2464, 2469, 2473, 2478],
               [2476, 2478, 2481, 2483, 2486, 2503, 2506, 2510, 2513, 2516]
             ]
           )
+        end
+
+        context 'errors' do
+          it '"R" records should be preceded by a corresponding TRCFMT' do
+            expect { Parser.parse 'R=2416;2410;2425;2429;2433' }.to raise_error ParsingError
+          end
         end
       end
     end

@@ -1,8 +1,11 @@
 module LensProtocol
   module OMA
     class Message
+      attr_reader :context
+
       def initialize
         @records = {}
+        @context = {}
       end
 
       def []= label, record
