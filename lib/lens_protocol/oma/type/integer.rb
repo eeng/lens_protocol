@@ -2,9 +2,8 @@ module LensProtocol
   module OMA
     module Type
       class Integer < Base
-        def parse message, label, values, _opts
-          values = values.map { |str| Integer(str) rescue nil }
-          super
+        def parse_values values
+          values.map { |str| Integer(str) rescue nil }
         end
 
         def format_values values

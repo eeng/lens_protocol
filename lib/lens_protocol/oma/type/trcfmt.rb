@@ -2,7 +2,8 @@ module LensProtocol
   module OMA
     module Type
       class Trcfmt < Base
-        def parse message, label, values, _opts
+        def parse line, message
+          label, values = label_and_values line
           side = side_position_from_trcfmt values
           message.add_record_side_values(label, side, values).set_context(:last_trcfmt_side, side)
         end

@@ -2,8 +2,9 @@ module LensProtocol
   module OMA
     module Type
       class MultiLineString < Base
-        def parse message, label, values, _opts
-          message.add_record_values(label, values)
+        def parse line, message
+          label, values = label_and_values line
+          message.add_record_values label, values
         end
 
         def format record, _message

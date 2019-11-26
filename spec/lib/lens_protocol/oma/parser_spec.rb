@@ -3,28 +3,8 @@ module LensProtocol
     RSpec.describe Parser do
       context 'parse' do
         it 'expects a string and returns the parsed message' do
-          message = subject.parse <<~OMA
-            REQ=FIL
-            JOB=123
-          OMA
+          message = subject.parse('REQ=FIL')
           expect(message).to be_a(Message)
-          expect(message.to_hash).to eq 'REQ' => ['FIL'], 'JOB' => ['123']
-        end
-
-        it 'should tolerate different line separators' do
-          message = subject.parse "A=B\r\nC=D"
-          expect(message.to_hash).to eq('A' => ['B'], 'C' => ['D'])
-        end
-
-        it 'should preserve empty values' do
-          expect(subject.parse('IPD=33;').values_of('IPD')).to eq [33, nil]
-          expect(subject.parse('IPD=;33').values_of('IPD')).to eq [nil, 33]
-          expect(subject.parse('JOB=').values_of('JOB')).to eq []
-        end
-
-        it 'unknown values are converted to nil' do
-          expect(subject.parse('OPTFRNT=?').values_of('OPTFRNT')).to eq [nil]
-          expect(subject.parse('OPTFRNT=?;2.00').values_of('OPTFRNT')).to eq [nil, 2]
         end
 
         it 'parsing of numeric records' do
@@ -93,6 +73,22 @@ module LensProtocol
               ]
             )
           end
+        end
+
+        it 'should tolerate different line separators' do
+          message = subject.parse "A=B\r\nC=D"
+          expect(message.to_hash).to eq('A' => ['B'], 'C' => ['D'])
+        end
+
+        it 'should preserve empty values' do
+          expect(subject.parse('IPD=33;').values_of('IPD')).to eq [33, nil]
+          expect(subject.parse('IPD=;33').values_of('IPD')).to eq [nil, 33]
+          expect(subject.parse('JOB=').values_of('JOB')).to eq []
+        end
+
+        it 'unknown values are converted to nil' do
+          expect(subject.parse('OPTFRNT=?').values_of('OPTFRNT')).to eq [nil]
+          expect(subject.parse('OPTFRNT=?;2.00').values_of('OPTFRNT')).to eq [nil, 2]
         end
 
         context 'errors' do

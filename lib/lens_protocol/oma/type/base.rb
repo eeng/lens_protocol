@@ -6,9 +6,10 @@ module LensProtocol
           @chiral = chiral
         end
 
-        # TODO maybe receive q line instead to make it more format like?
-        def parse message, label, values, _opts
-          message.add_record label, values
+        # Given a line and a message produces a new message with the record(s) corresponding to that line added to the message
+        def parse line, message
+          label, values = label_and_values line
+          message.add_record label, parse_values(values)
         end
 
         # @param [Record]
@@ -18,6 +19,16 @@ module LensProtocol
         end
 
         private
+
+        def label_and_values line
+          label, data = line.split('=')
+          values = data.to_s.split(';', -1)
+          [label, values]
+        end
+
+        def parse_values values
+          values
+        end
 
         def format_single_line label, values
           "#{label}=#{values.join(';')}"
