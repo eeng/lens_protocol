@@ -11,16 +11,12 @@ module LensProtocol
 
     def from_rectangular_coordinates coordinates, polygon: {}, cross: {}, cross_size: 200
       polygon_opts = {
-        'stroke' => 'black',
         'stroke-width' => 50,
-        'stroke-linejoin' => 'round',
-        'fill' => 'white',
         'points' => polygon_points_from_coordinates(coordinates)
       }.merge(polygon)
 
       cross_opts = {
-        'stroke-width' => 20,
-        'stroke' => 'black'
+        'stroke-width' => 20
       }.merge(cross)
 
       Nokogiri::XML::Builder.new do |xml|

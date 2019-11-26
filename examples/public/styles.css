@@ -5,5 +5,10 @@
 .lens {
   width: 200px;
   display: inline-block;
-  padding: 5px
+  padding: 5px;
+}
+
+.lens svg {
+  stroke: black;
+  fill: #eee;
 }
