@@ -6,9 +6,9 @@
   </head>
   <body>
     <% files_and_messages.each do |(filename, message)| %>
-      <div><%= filename %></div>
-
       <div class="lenses-container">
+        <div class="filename"><%= filename %></div>
+
         <% if (svgs = message.to_svg).any? %>
           <% svgs.map do |svg| %>
             <div class="lens">
