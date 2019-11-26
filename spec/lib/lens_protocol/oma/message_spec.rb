@@ -1,6 +1,19 @@
 module LensProtocol
   module OMA
     RSpec.describe Message do
+      context 'values_of' do
+        it 'returns the record values' do
+          message = Message.from_hash('JOB' => %w[123])
+          expect(message.values_of('JOB')).to eq %w[123]
+        end
+
+        it 'returns nil when the record is not present' do
+          message = Message.from_hash('JOB' => %w[123])
+          expect(message.values_of('JOBx')).to eq nil
+          expect(message.values_of('')).to eq nil
+        end
+      end
+
       context 'tracing_in_polar_coordinates' do
         it 'should convert the "R" datasets to polar coordinates with the radiuses' do
           message = Message.from_hash(

@@ -31,7 +31,11 @@ module LensProtocol
       end
 
       def values_of label
-        @records[label].values
+        @records[label].values if contains? label
+      end
+
+      def contains? label
+        @records.has_key? label
       end
 
       def context key

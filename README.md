@@ -1,8 +1,10 @@
 # LensProtocol
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/lens_protocol`. To experiment with that code, run `bin/console` for an interactive prompt.
+A Ruby parser and builder for the OMA protocol (a.k.a. Data Communication Standard) which was developed by the Lens Processing & Technology Division of The Vision Council for interconnection of optical laboratory equipment.
 
-TODO: Delete this and the text above, and describe your gem
+Furthermore, it allows you to generate a SVG representation of the tracing datasets.
+
+[![Build Status](https://travis-ci.org/eeng/lens_protocol.svg?branch=master)](https://travis-ci.org/eeng/lens_protocol)
 
 ## Installation
 
@@ -22,11 +24,39 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+### Parsing an OMA file
+
+```ruby
+require 'lens_protocol'
+message = LensProtocol::OMA::Parser.parse(File.read('examples/oma/R360_1.oma'))
+message.values_of('SPH') # => [1.25, -0.5]
+```
+
+### Generating the tracing data SVG
+
+The `message.to_svg` method returns an array of SVG strings, one for each side, which can be used directly in an ERB template, like this:
+
+```html
+<div class="lenses-container">
+  <% message.to_svg.map do |svg| %>
+    <div class="lens">
+      <%= svg %>
+    </div>
+  <% end %>
+</div>
+```
+
+And it should look like this:
+
+![Sample Image](examples/images/R360_1.png)
+
+To customize the styles, please check out [the provided sample stylesheet](examples/public/styles.css).
 
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` or `guard` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+
+There's also a Sinatra app which allows you visualize the generated SVG. To start the server do `bundle exec ruby examples/svg.rb` and go to `http://localhost:4567/`
 
 To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
 
