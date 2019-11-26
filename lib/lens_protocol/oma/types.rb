@@ -3,7 +3,7 @@ module LensProtocol
     TYPES = Hash.new { Type::String.new }.merge(
       'FTYP' => Type::Integer.new,
       'ETYP' => Type::Integer.new,
-      'DBL' => Type::Numeric.new(decimals: 2),
+      'DBL' => Type::Numeric.new,
       'HBOX' => Type::Numeric.new(decimals: 2, chiral: true),
       'VBOX' => Type::Numeric.new(decimals: 2, chiral: true),
       'CRIB' => Type::Numeric.new(decimals: 2, chiral: true),
@@ -30,7 +30,7 @@ module LensProtocol
       'FCOCUP' => Type::Numeric.new(decimals: 2, chiral: true),
       'SGOCIN' => Type::Numeric.new(decimals: 2, chiral: true),
       'SGOCUP' => Type::Numeric.new(decimals: 2, chiral: true),
-      'FRNT' => Type::Numeric.new(decimals: 2, chiral: true),
+      'FRNT' => Type::Numeric.new(decimals: 3, chiral: true),
       'SPH' => Type::Numeric.new(decimals: 2, chiral: true),
       'CYL' => Type::Numeric.new(decimals: 2, chiral: true),
       'AX' => Type::Numeric.new(decimals: 2, chiral: true),
@@ -62,7 +62,8 @@ module LensProtocol
       '_CTO' => Type::Integer.new(chiral: true),
       'TRCFMT' => Type::Trcfmt.new(chiral: true),
       'R' => Type::R.new(chiral: true),
-      'XSTATUS' => Type::MultiLineString.new
+      'XSTATUS' => Type::MultiLineString.new,
+      'DRILLE' => Type::MultiLineString.new,
     )
   end
 end

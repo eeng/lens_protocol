@@ -6,5 +6,9 @@ module LensProtocol
     def parse *args
       Parser.new.parse *args
     end
+
+    def format *args
+      Formatter.new.format *args
+    end
   end
 end

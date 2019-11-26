@@ -7,10 +7,6 @@ module LensProtocol
         @label = label
         @values = values
       end
-
-      def to_s
-        "#{label}=#{values.join(';')}"
-      end
     end
   end
 end

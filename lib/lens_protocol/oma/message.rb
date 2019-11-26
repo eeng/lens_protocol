@@ -1,7 +1,6 @@
 module LensProtocol
   module OMA
     class Message
-      LINE_SEPARATOR = "\r\n"
       attr_reader :records
 
       # Builds a message from a hash of record labels to record values.
@@ -114,7 +113,7 @@ module LensProtocol
       end
 
       def to_s
-        @records.values.join(LINE_SEPARATOR) + LINE_SEPARATOR
+        OMA.format self
       end
     end
   end

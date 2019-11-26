@@ -112,8 +112,8 @@ module LensProtocol
       end
 
       context 'to_s' do
-        it 'generates the OMA formatted string with the Windows line endings' do
-          expect(Message.from_hash('A' => [1], 'B' => [2, 3]).to_s).to eq "A=1\r\nB=2;3\r\n"
+        it 'uses the formatter to generate the OMA string' do
+          expect(Message.from_hash('A' => [1]).to_s).to eq "A=1\r\n"
         end
       end
     end

@@ -6,6 +6,10 @@ module LensProtocol
           side = message.context(:last_trcfmt_side) or raise ParsingError.new(line, 'Could not found a corresponding TRCFMT record')
           message.add_record_side_values(label, side, values.map(&:to_i))
         end
+
+        def format _record, _message
+          [] # Formatted in Type::Trcfmt
+        end
       end
     end
   end
