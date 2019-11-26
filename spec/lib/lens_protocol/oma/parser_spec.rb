@@ -35,50 +35,72 @@ module LensProtocol
           expect(Parser.parse('JOB=').values_of('JOB')).to eq []
         end
 
-        it 'parsing of tracing datasets of both sides' do
-          message = Parser.parse <<~OMA
-            TRCFMT=1;10;E;R;P
-            R=2416;2410;2425;2429;2433
-            R=2459;2464;2469;2473;2478
-            TRCFMT=1;10;E;L;P
-            R=2476;2478;2481;2483;2486
-            R=2503;2506;2510;2513;2516
-          OMA
-
-          expect(message.to_hash).to eq(
-            'TRCFMT' => [
-              %w[1 10 E R P],
-              %w[1 10 E L P]
-            ],
-            'R' => [
-              [2416, 2410, 2425, 2429, 2433, 2459, 2464, 2469, 2473, 2478],
-              [2476, 2478, 2481, 2483, 2486, 2503, 2506, 2510, 2513, 2516]
-            ]
-          )
+        it 'unknown values are converted to nil' do
+          expect(Parser.parse('OPTFRNT=?').values_of('OPTFRNT')).to eq [nil]
+          expect(Parser.parse('OPTFRNT=?;2.00').values_of('OPTFRNT')).to eq [nil, 2]
         end
 
-        it 'parsing of tracing datasets of one side' do
-          message = Parser.parse <<~OMA
-            TRCFMT=1;10;E;R;P
-            R=2416;2410;2425;2429;2433
-            R=2459;2464;2469;2473;2478
-          OMA
+        context 'parsing of tracing datasets' do
+          it 'when both sides are present' do
+            message = Parser.parse <<~OMA
+              TRCFMT=1;10;E;R;P
+              R=2416;2410;2425;2429;2433
+              R=2459;2464;2469;2473;2478
+              TRCFMT=1;10;E;L;P
+              R=2476;2478;2481;2483;2486
+              R=2503;2506;2510;2513;2516
+            OMA
 
-          expect(message.to_hash).to eq(
-            'TRCFMT' => [
-              %w[1 10 E R P],
-              %w[]
-            ],
-            'R' => [
-              [2416, 2410, 2425, 2429, 2433, 2459, 2464, 2469, 2473, 2478],
-              []
-            ]
-          )
+            expect(message.to_hash).to eq(
+              'TRCFMT' => [
+                %w[1 10 E R P],
+                %w[1 10 E L P]
+              ],
+              'R' => [
+                [2416, 2410, 2425, 2429, 2433, 2459, 2464, 2469, 2473, 2478],
+                [2476, 2478, 2481, 2483, 2486, 2503, 2506, 2510, 2513, 2516]
+              ]
+            )
+          end
+
+          it 'when only one side is present' do
+            message = Parser.parse <<~OMA
+              TRCFMT=1;10;E;R;P
+              R=2416;2410;2425;2429;2433
+              R=2459;2464;2469;2473;2478
+            OMA
+
+            expect(message.to_hash).to eq(
+              'TRCFMT' => [
+                %w[1 10 E R P],
+                %w[]
+              ],
+              'R' => [
+                [2416, 2410, 2425, 2429, 2433, 2459, 2464, 2469, 2473, 2478],
+                []
+              ]
+            )
+          end
         end
 
         context 'errors' do
           it '"R" records should be preceded by a corresponding TRCFMT' do
             expect { Parser.parse 'R=2416;2410;2425;2429;2433' }.to raise_error ParsingError
+          end
+        end
+
+        context 'options' do
+          it 'should be posible to override record types' do
+            oma = <<~OMA
+              _EXP=A1;A2
+              _EXP=B1;B2
+            OMA
+
+            message = Parser.parse(oma, types: {'_EXP' => Type::MultiLineString.new})
+            expect(message.values_of('_EXP')).to eq [%w[A1 A2], %w[B1 B2]]
+
+            message = Parser.parse(oma)
+            expect(message.values_of('_EXP')).to eq %w[B1 B2]
           end
         end
       end

@@ -11,6 +11,12 @@ module LensProtocol
         self
       end
 
+      def add_record_values label, values
+        @records[label] ||= Record.new(label: label, values: [])
+        @records[label].values << values
+        self
+      end
+
       def add_record_side_values label, side, values
         @records[label] ||= Record.new(label: label, values: [[], []])
         @records[label].values[side].concat values

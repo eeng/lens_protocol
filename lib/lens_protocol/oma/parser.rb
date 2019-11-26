@@ -1,26 +1,22 @@
 module LensProtocol
   module OMA
     class Parser
-      def self.parse oma_str
-        new.parse oma_str
+      def self.parse oma_str, **opts
+        new.parse oma_str, **opts
       end
 
-      def self.parse_file file_path
-        parse File.read file_path
-      end
-
-      def parse oma_str
+      def parse oma_str, types: {}
         normalize_line_endings(oma_str)
           .split("\n")
-          .reduce(Message.new) { |message, line| parse_line message, line }
+          .reduce(Message.new) { |message, line| parse_line message, line, TYPES.merge(types) }
       end
 
       private
 
-      def parse_line message, line
+      def parse_line message, line, types
         label, data = line.split('=')
         values = data.to_s.split(';', -1)
-        TYPES[label].parse(message, label, values, line: line)
+        types[label].parse(message, label, values, line: line)
       end
 
       def normalize_line_endings str
