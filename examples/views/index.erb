@@ -9,9 +9,15 @@
       <div><%= filename %></div>
 
       <div class="lenses-container">
-        <% message.to_svg.map do |svg| %>
-          <div class="lens">
-            <%= svg %>
+        <% if (svgs = message.to_svg).any? %>
+          <% svgs.map do |svg| %>
+            <div class="lens">
+              <%= svg %>
+            </div>
+          <% end %>
+        <% else %>
+          <div>
+            Could not recognize tracing data.
           </div>
         <% end %>
       </div>

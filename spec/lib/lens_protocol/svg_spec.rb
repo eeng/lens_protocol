@@ -3,6 +3,7 @@ module LensProtocol
     context 'from_message' do
       it 'should return an array of svgs (on for each side)' do
         message = OMA::Message.from_hash(
+          'TRCFMT' => [[1], [1]],
           'R' => [
             [2416, 2410, 2425, 2429],
             [2476, 2478, 2481, 2483]
@@ -12,15 +13,15 @@ module LensProtocol
         expect(right_svg.css('svg').size).to eq 1
         expect(left_svg.css('svg').size).to eq 1
 
-        message = OMA::Message.from_hash('R' => [[], [2476]])
+        message = OMA::Message.from_hash('TRCFMT' => [[], [1]], 'R' => [[], [2476]])
         expect(SVG.from_message(message).size).to eq 1
 
-        message = OMA::Message.from_hash('R' => [[2476], []])
+        message = OMA::Message.from_hash('TRCFMT' => [[1], []], 'R' => [[2476], []])
         expect(SVG.from_message(message).size).to eq 1
       end
 
       it 'should draw a polygon with the points Y coordinate inverted' do
-        message = OMA::Message.from_hash('R' => [[2416, 2410, 2425, 2429], []])
+        message = OMA::Message.from_hash('TRCFMT' => [[1], []], 'R' => [[2416, 2410, 2425, 2429], []])
         svg = parse_xml(SVG.from_message(message).first)
         expect(svg.xpath('//polygon/@points').first.value).to eq '2416 0, 0 -2410, -2425 0, 0 2429'
       end

@@ -54,9 +54,25 @@ module LensProtocol
         Hash[*@records.flat_map { |label, record| [label, record.values] }]
       end
 
+      # Returns the "R" reconds decoded radiuses according to the tracing format.
+      def radius_data
+        return [] unless values_of('TRCFMT') && values_of('R')
+        [0, 1].map do |side|
+          format_number, = values_of('TRCFMT')[side]
+          case format_number.to_i
+          when 0 # side not present
+            []
+          when 1 # ASCII format
+            values_of('R')[side]
+          else # unknown format
+            return []
+          end
+        end
+      end
+
       # Converts the "R" record values to polar coordinates.
       def tracing_in_polar_coordinates
-        (values_of('R') || []).map { |radiuses| radiuses_to_polar radiuses }
+        radius_data.map { |radiuses| radiuses_to_polar radiuses }
       end
 
       def radiuses_to_polar radiuses
@@ -65,7 +81,7 @@ module LensProtocol
 
       # Converts the "R" record values to rectangular coordinates.
       def tracing_in_rectangular_coordinates
-        (values_of('R') || []).map { |radiuses| radiuses_to_rectangular radiuses }
+        radius_data.map { |radiuses| radiuses_to_rectangular radiuses }
       end
 
       def radiuses_to_rectangular radiuses
