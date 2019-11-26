@@ -1,6 +1,6 @@
 # LensProtocol
 
-A Ruby parser and builder for the OMA protocol (a.k.a. Data Communication Standard) which was developed by the Lens Processing & Technology Division of The Vision Council for interconnection of optical laboratory equipment.
+A Ruby parser and builder for the OMA protocol (a.k.a. Data Communication Standard) that was developed by the Lens Processing & Technology Division of The Vision Council for interconnection of optical laboratory equipment.
 
 Furthermore, it allows you to generate a SVG representation of the tracing datasets.
 

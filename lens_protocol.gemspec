@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["emmanicolau@gmail.com"]
 
   spec.summary       = %q{LensProtocol is a Ruby parser and builder for the OMA protocol.}
-  spec.description   = %q{A Ruby parser and builder for the OMA protocol (a.k.a. Data Communication Standard) which was developed by the Lens Processing & Technology Division of The Vision Council for interconnection of optical laboratory equipment.}
+  spec.description   = %q{A Ruby parser and builder for the OMA protocol (a.k.a. Data Communication Standard) that was developed by the Lens Processing & Technology Division of The Vision Council for interconnection of optical laboratory equipment.}
   spec.homepage      = "https://github.com/eeng/lens_protocol"
 
   # Specify which files should be added to the gem when it is released.
