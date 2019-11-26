@@ -88,7 +88,8 @@ module LensProtocol
         radiuses_to_polar(radiuses).map { |(a, r)| [r * Math.cos(a), r * Math.sin(a)].map { |v| v.round 2 } }
       end
 
-      # Returns an array of SVG strings, one for each side
+      # Returns an array of SVG strings, one for each side. If the tracing format is not recognized
+      # or there is no tracing data, returns an empty array.
       def to_svg **opts
         SVG.from_message self, **opts
       end
