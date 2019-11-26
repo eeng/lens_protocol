@@ -16,7 +16,18 @@ module LensProtocol
           expect(message.to_hash).to eq('A' => ['B'], 'C' => ['D'])
         end
 
-        it 'some records store numeric values' do
+        it 'should preserve empty values' do
+          expect(Parser.parse('IPD=33;').values_of('IPD')).to eq [33, nil]
+          expect(Parser.parse('IPD=;33').values_of('IPD')).to eq [nil, 33]
+          expect(Parser.parse('JOB=').values_of('JOB')).to eq []
+        end
+
+        it 'unknown values are converted to nil' do
+          expect(Parser.parse('OPTFRNT=?').values_of('OPTFRNT')).to eq [nil]
+          expect(Parser.parse('OPTFRNT=?;2.00').values_of('OPTFRNT')).to eq [nil, 2]
+        end
+
+        it 'parsing of numeric records' do
           message = Parser.parse <<~OMA
             FTYP=1
             ETYP=2
@@ -29,15 +40,16 @@ module LensProtocol
           expect(message.values_of('NPD')).to eq [30.5, -30.75]
         end
 
-        it 'should preserve empty values' do
-          expect(Parser.parse('IPD=33;').values_of('IPD')).to eq [33, nil]
-          expect(Parser.parse('IPD=;33').values_of('IPD')).to eq [nil, 33]
-          expect(Parser.parse('JOB=').values_of('JOB')).to eq []
-        end
+        it 'parsing of generic multi-line records' do
+          message = Parser.parse <<~OMA
+            XSTATUS=R;2300;Error1
+            XSTATUS=R;2301;Error2
+          OMA
 
-        it 'unknown values are converted to nil' do
-          expect(Parser.parse('OPTFRNT=?').values_of('OPTFRNT')).to eq [nil]
-          expect(Parser.parse('OPTFRNT=?;2.00').values_of('OPTFRNT')).to eq [nil, 2]
+          expect(message.values_of('XSTATUS')).to eq [
+            %w[R 2300 Error1],
+            %w[R 2301 Error2]
+          ]
         end
 
         context 'parsing of tracing datasets' do

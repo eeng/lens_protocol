@@ -35,6 +35,7 @@ module LensProtocol
 
     def view_box_from_coordinates coordinates
       if coordinates.any?
+        # Double the max coordinates plus a 10% to leave some margin for the border
         width = coordinates.map { |(x, _)| x.abs }.max * 2.1
         height = coordinates.map { |(_, y)| y.abs }.max * 2.1
         [-width / 2, -height / 2, width, height].join ' '

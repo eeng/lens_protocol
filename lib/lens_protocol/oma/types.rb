@@ -62,6 +62,7 @@ module LensProtocol
       '_CTO' => Type::Integer.new(chiral: true),
       'TRCFMT' => Type::Trcfmt.new(chiral: true),
       'R' => Type::R.new(chiral: true),
+      'XSTATUS' => Type::MultiLineString.new
     )
   end
 end
