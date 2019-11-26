@@ -1,6 +1,8 @@
 module LensProtocol
   module OMA
     class Message
+      attr_reader :records
+
       def initialize records: {}, context: {}
         @records = records
         @context = context
@@ -65,6 +67,18 @@ module LensProtocol
       # @return and array of SVG strings, one for each side
       def to_svg **opts
         SVG.from_message self, **opts
+      end
+
+      def merge other
+        Message.new records: @records.merge(other.records)
+      end
+
+      def except labels
+        Message.new records: @records.reject { |label, _| labels.include? label }
+      end
+
+      def only labels
+        Message.new records: @records.slice(*labels)
       end
     end
   end

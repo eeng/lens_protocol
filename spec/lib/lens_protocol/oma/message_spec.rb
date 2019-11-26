@@ -56,6 +56,40 @@ module LensProtocol
           ]
         end
       end
+
+      context 'merge' do
+        it "add the other message's records that aren't already present in the receiver" do
+          m1 = Message.from_hash('A' => 1, 'B' => 2)
+          m2 = Message.from_hash('A' => 11, 'CC' => 33)
+          expect(m1.merge(m2).to_hash).to eq('A' => 11, 'B' => 2, 'CC' => 33)
+        end
+
+        it 'returns a new message without changing the originals' do
+          m1 = Message.from_hash('A' => 1)
+          m2 = Message.from_hash('A' => 2)
+          m1.merge(m2)
+          expect(m1.to_hash).to eq 'A' => 1
+          expect(m2.to_hash).to eq 'A' => 2
+        end
+      end
+
+      context 'except' do
+        it 'returns a new message excluding the specified values' do
+          m1 = Message.from_hash('A' => 1, 'B' => 2)
+          m2 = m1.except(%w[B])
+          expect(m1.to_hash).to eq 'A' => 1, 'B' => 2
+          expect(m2.to_hash).to eq 'A' => 1
+        end
+      end
+
+      context 'only' do
+        it 'returns a new message excluding the specified values' do
+          m1 = Message.from_hash('A' => 1, 'B' => 2)
+          m2 = m1.only(%w[B])
+          expect(m1.to_hash).to eq 'A' => 1, 'B' => 2
+          expect(m2.to_hash).to eq 'B' => 2
+        end
+      end
     end
   end
 end
