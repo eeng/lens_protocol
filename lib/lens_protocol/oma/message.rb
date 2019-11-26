@@ -35,7 +35,7 @@ module LensProtocol
       end
 
       def contains? label
-        @records.has_key? label
+        @records.key? label
       end
 
       def context key

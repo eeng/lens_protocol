@@ -28,7 +28,7 @@ Or install it yourself as:
 
 ```ruby
 require 'lens_protocol'
-message = LensProtocol::OMA::Parser.parse(File.read('examples/oma/R360_1.oma'))
+message = LensProtocol::OMA.parse(File.read('examples/oma/R360_1.oma'))
 message.values_of('SPH') # => [1.25, -0.5]
 ```
 

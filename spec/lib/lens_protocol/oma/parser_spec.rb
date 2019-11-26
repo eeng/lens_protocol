@@ -3,7 +3,7 @@ module LensProtocol
     RSpec.describe Parser do
       context 'parse' do
         it 'expects a string and returns the parsed message' do
-          message = Parser.parse <<~OMA
+          message = subject.parse <<~OMA
             REQ=FIL
             JOB=123
           OMA
@@ -12,23 +12,23 @@ module LensProtocol
         end
 
         it 'should tolerate different line separators' do
-          message = Parser.parse "A=B\r\nC=D"
+          message = subject.parse "A=B\r\nC=D"
           expect(message.to_hash).to eq('A' => ['B'], 'C' => ['D'])
         end
 
         it 'should preserve empty values' do
-          expect(Parser.parse('IPD=33;').values_of('IPD')).to eq [33, nil]
-          expect(Parser.parse('IPD=;33').values_of('IPD')).to eq [nil, 33]
-          expect(Parser.parse('JOB=').values_of('JOB')).to eq []
+          expect(subject.parse('IPD=33;').values_of('IPD')).to eq [33, nil]
+          expect(subject.parse('IPD=;33').values_of('IPD')).to eq [nil, 33]
+          expect(subject.parse('JOB=').values_of('JOB')).to eq []
         end
 
         it 'unknown values are converted to nil' do
-          expect(Parser.parse('OPTFRNT=?').values_of('OPTFRNT')).to eq [nil]
-          expect(Parser.parse('OPTFRNT=?;2.00').values_of('OPTFRNT')).to eq [nil, 2]
+          expect(subject.parse('OPTFRNT=?').values_of('OPTFRNT')).to eq [nil]
+          expect(subject.parse('OPTFRNT=?;2.00').values_of('OPTFRNT')).to eq [nil, 2]
         end
 
         it 'parsing of numeric records' do
-          message = Parser.parse <<~OMA
+          message = subject.parse <<~OMA
             FTYP=1
             ETYP=2
             DBL=1.25
@@ -41,7 +41,7 @@ module LensProtocol
         end
 
         it 'parsing of generic multi-line records' do
-          message = Parser.parse <<~OMA
+          message = subject.parse <<~OMA
             XSTATUS=R;2300;Error1
             XSTATUS=R;2301;Error2
           OMA
@@ -54,7 +54,7 @@ module LensProtocol
 
         context 'parsing of tracing datasets' do
           it 'when both sides are present' do
-            message = Parser.parse <<~OMA
+            message = subject.parse <<~OMA
               TRCFMT=1;10;E;R;P
               R=2416;2410;2425;2429;2433
               R=2459;2464;2469;2473;2478
@@ -76,7 +76,7 @@ module LensProtocol
           end
 
           it 'when only one side is present' do
-            message = Parser.parse <<~OMA
+            message = subject.parse <<~OMA
               TRCFMT=1;10;E;R;P
               R=2416;2410;2425;2429;2433
               R=2459;2464;2469;2473;2478
@@ -97,7 +97,7 @@ module LensProtocol
 
         context 'errors' do
           it '"R" records should be preceded by a corresponding TRCFMT' do
-            expect { Parser.parse 'R=2416;2410;2425;2429;2433' }.to raise_error ParsingError
+            expect { subject.parse 'R=2416;2410;2425;2429;2433' }.to raise_error ParsingError
           end
         end
 
@@ -108,10 +108,10 @@ module LensProtocol
               _EXP=B1;B2
             OMA
 
-            message = Parser.parse(oma, types: {'_EXP' => Type::MultiLineString.new})
+            message = subject.parse(oma, types: {'_EXP' => Type::MultiLineString.new})
             expect(message.values_of('_EXP')).to eq [%w[A1 A2], %w[B1 B2]]
 
-            message = Parser.parse(oma)
+            message = subject.parse(oma)
             expect(message.values_of('_EXP')).to eq %w[B1 B2]
           end
         end

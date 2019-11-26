@@ -1,10 +1,6 @@
 module LensProtocol
   module OMA
     class Parser
-      def self.parse oma_str, **opts
-        new.parse oma_str, **opts
-      end
-
       def parse oma_str, types: {}
         normalize_line_endings(oma_str)
           .split("\n")
