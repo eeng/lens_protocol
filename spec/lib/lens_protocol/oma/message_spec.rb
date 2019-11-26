@@ -29,16 +29,15 @@ module LensProtocol
         end
 
         it 'when only one side is present' do
-          message = Message.from_hash(
-            'R' => [
-              [],
-              [2476, 2478]
-            ]
-          )
+          message = Message.from_hash('R' => [[], [2476, 2478]])
           expect(message.tracing_in_polar_coordinates).to eq [
             [],
             [[0, 2476], [Math::PI, 2478]]
           ]
+        end
+
+        it 'when R is not present' do
+          expect(Message.new.tracing_in_polar_coordinates).to eq []
         end
       end
 
@@ -57,12 +56,7 @@ module LensProtocol
         end
 
         it 'when only one side is present' do
-          message = Message.from_hash(
-            'R' => [
-              [2416, 2425],
-              []
-            ]
-          )
+          message = Message.from_hash('R' => [[2416, 2425], []])
           expect(message.tracing_in_rectangular_coordinates).to eq [
             [[2416, 0], [-2425, 0]],
             []

@@ -16,7 +16,7 @@ module LensProtocol
       end
 
       def normalize_line_endings str
-        str.gsub /\r\n?/, "\n"
+        str.to_s.gsub /\r\n?/, "\n"
       end
     end
   end

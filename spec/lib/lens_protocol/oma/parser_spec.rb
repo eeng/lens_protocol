@@ -96,6 +96,11 @@ module LensProtocol
         end
 
         context 'errors' do
+          it 'nil and empty messages' do
+            expect(subject.parse(nil).to_hash).to be_empty
+            expect(subject.parse('').to_hash).to be_empty
+          end
+
           it '"R" records should be preceded by a corresponding TRCFMT' do
             expect { subject.parse 'R=2416;2410;2425;2429;2433' }.to raise_error ParsingError
           end

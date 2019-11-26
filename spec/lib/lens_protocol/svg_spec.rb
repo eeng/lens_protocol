@@ -25,6 +25,10 @@ module LensProtocol
         expect(svg.xpath('//polygon/@points').first.value).to eq '2416 0, 0 -2410, -2425 0, 0 2429'
       end
 
+      it 'empty message returns an empty array' do
+        expect(SVG.from_message(OMA::Message.new)).to eq []
+      end
+
       def parse_xml str
         doc = Nokogiri::XML(str)
         doc.remove_namespaces!

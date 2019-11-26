@@ -56,7 +56,7 @@ module LensProtocol
 
       # Converts the "R" record values to polar coordinates.
       def tracing_in_polar_coordinates
-        values_of('R').map { |radiuses| radiuses_to_polar radiuses }
+        (values_of('R') || []).map { |radiuses| radiuses_to_polar radiuses }
       end
 
       def radiuses_to_polar radiuses
@@ -65,7 +65,7 @@ module LensProtocol
 
       # Converts the "R" record values to rectangular coordinates.
       def tracing_in_rectangular_coordinates
-        values_of('R').map { |radiuses| radiuses_to_rectangular radiuses }
+        (values_of('R') || []).map { |radiuses| radiuses_to_rectangular radiuses }
       end
 
       def radiuses_to_rectangular radiuses
