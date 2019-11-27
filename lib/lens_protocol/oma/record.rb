@@ -1,11 +1,14 @@
 module LensProtocol
   module OMA
     class Record
-      attr_reader :label, :values
+      attr_reader :label
 
-      def initialize label:, values:
+      # May hold a single value, an array of values (on multi-value and chiral records), or an array of array of values (in R records for example)
+      attr_reader :value
+
+      def initialize label:, value:
         @label = label
-        @values = values
+        @value = value
       end
     end
   end

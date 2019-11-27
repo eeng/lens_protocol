@@ -3,15 +3,23 @@ module LensProtocol
     RSpec.describe Formatter do
       context 'format' do
         it 'generates the OMA formatted string with the Windows line endings' do
-          message = Message.from_hash('A' => [1], 'B' => [2, 3])
+          message = Message.from_hash('A' => 1, 'B' => [2, 3])
           expect(subject.format(message)).to eq "A=1\r\nB=2;3\r\n"
         end
 
-        it 'formats numeric records with the correct decimal places' do
+        it 'single-value numeric records' do
+          message = Message.from_hash('FTYPE' => 3)
+          expect(subject.format_lines(message)).to eq %w[FTYPE=3]
+
+          message = Message.from_hash('FTYPE' => nil)
+          expect(subject.format_lines(message)).to eq %w[FTYPE=]
+        end
+
+        it 'chiral numeric records' do
           message = Message.from_hash('SPH' => [1.251, nil])
           expect(subject.format_lines(message)).to eq %w[SPH=1.25;]
-          expect(subject.format_lines(message, types: {'SPH' => Type::Numeric.new(decimals: 1)})).to eq %w[SPH=1.3;]
-          expect(subject.format_lines(message, types: {'SPH' => Type::Integer.new})).to eq %w[SPH=1;]
+          expect(subject.format_lines(message, types: {'SPH' => Type::Numeric.new(decimals: 1, mode: :chiral)})).to eq %w[SPH=1.3;]
+          expect(subject.format_lines(message, types: {'SPH' => Type::Integer.new(mode: :chiral)})).to eq %w[SPH=1;]
         end
 
         it 'multi-line records' do

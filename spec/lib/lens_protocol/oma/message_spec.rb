@@ -1,16 +1,16 @@
 module LensProtocol
   module OMA
     RSpec.describe Message do
-      context 'values_of' do
-        it 'returns the record values' do
-          message = Message.from_hash('JOB' => %w[123])
-          expect(message.values_of('JOB')).to eq %w[123]
+      context 'value_of' do
+        it 'returns the record value' do
+          message = Message.from_hash('JOB' => 'X')
+          expect(message.value_of('JOB')).to eq 'X'
         end
 
         it 'returns nil when the record is not present' do
-          message = Message.from_hash('JOB' => %w[123])
-          expect(message.values_of('JOBx')).to eq nil
-          expect(message.values_of('')).to eq nil
+          message = Message.from_hash('JOB' => '123')
+          expect(message.value_of('JOBx')).to eq nil
+          expect(message.value_of('')).to eq nil
         end
       end
 
@@ -113,7 +113,7 @@ module LensProtocol
 
       context 'to_s' do
         it 'uses the formatter to generate the OMA string' do
-          expect(Message.from_hash('A' => [1]).to_s).to eq "A=1\r\n"
+          expect(Message.from_hash('A' => 1).to_s).to eq "A=1\r\n"
         end
       end
     end

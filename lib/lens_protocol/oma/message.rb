@@ -3,10 +3,10 @@ module LensProtocol
     class Message
       attr_reader :records
 
-      # Builds a message from a hash of record labels to record values.
+      # Builds a message from a hash of record labels to record value.
       def self.from_hash hash
-        hash.reduce new do |message, (label, values)|
-          message.add_record(label, values)
+        hash.reduce new do |message, (label, value)|
+          message.add_record(label, value)
         end
       end
 
@@ -15,20 +15,20 @@ module LensProtocol
         @context = context
       end
 
-      def add_record label, values
-        @records[label] = Record.new(label: label, values: values)
+      def add_record label, value
+        @records[label] ||= Record.new(label: label, value: value)
         self
       end
 
       def add_record_values label, values
-        @records[label] ||= Record.new(label: label, values: [])
-        @records[label].values << values
+        @records[label] ||= Record.new(label: label, value: [])
+        @records[label].value << values
         self
       end
 
       def add_record_side_values label, side, values
-        @records[label] ||= Record.new(label: label, values: [[], []])
-        @records[label].values[side].concat values
+        @records[label] ||= Record.new(label: label, value: [[], []])
+        @records[label].value[side].concat values
         self
       end
 
@@ -37,8 +37,8 @@ module LensProtocol
         self
       end
 
-      def values_of label
-        @records[label].values if include? label
+      def value_of label
+        @records[label].value if include? label
       end
 
       # Returns +true+ if the message contains a record with the given label
@@ -51,19 +51,19 @@ module LensProtocol
       end
 
       def to_hash
-        Hash[*@records.flat_map { |label, record| [label, record.values] }]
+        Hash[*@records.flat_map { |label, record| [label, record.value] }]
       end
 
       # Returns the "R" reconds decoded radiuses according to the tracing format.
       def radius_data
-        return [] unless values_of('TRCFMT') && values_of('R')
+        return [] unless value_of('TRCFMT') && value_of('R')
         [0, 1].map do |side|
-          format_number, = values_of('TRCFMT')[side]
+          format_number, = value_of('TRCFMT')[side]
           case format_number.to_i
           when 0 # side not present
             []
           when 1 # ASCII format
-            values_of('R')[side]
+            value_of('R')[side]
           else # unknown format
             return []
           end

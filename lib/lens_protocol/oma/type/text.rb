@@ -1,7 +1,7 @@
 module LensProtocol
   module OMA
     module Type
-      class String < Base
+      class Text < Base
       end
     end
   end

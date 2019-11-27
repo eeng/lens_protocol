@@ -2,12 +2,12 @@ module LensProtocol
   module OMA
     module Type
       class Integer < Base
-        def parse_values values
-          values.map { |str| Integer(str) rescue nil }
+        def parse_value value
+          Integer(value) rescue nil
         end
 
-        def format_values values
-          values.map { |v| v.round if v }
+        def format_value value
+          value.round if value
         end
       end
     end

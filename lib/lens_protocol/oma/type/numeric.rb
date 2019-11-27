@@ -7,17 +7,15 @@ module LensProtocol
           @decimals = decimals
         end
 
-        def parse_values values
-          values.map { |str| Float(str) rescue nil }
+        def parse_value value
+          Float(value) rescue nil
         end
 
-        def format_values values
-          values.map do |v|
-            if v && @decimals
-              "%.#{@decimals}f" % v
-            else
-              v
-            end
+        def format_value value
+          if value && @decimals
+            "%.#{@decimals}f" % value
+          else
+            value
           end
         end
       end
