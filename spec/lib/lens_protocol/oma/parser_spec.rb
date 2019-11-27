@@ -66,13 +66,13 @@ module LensProtocol
 
         it 'matrix_of_values records' do
           message = subject.parse <<~OMA
-            XSTATUS=R;2300;Error1
-            XSTATUS=R;2301;Error2
+            XSTATUS=R;2300;Msg1
+            XSTATUS=R;2301;Msg2
           OMA
 
           expect(message.value_of('XSTATUS')).to eq [
-            %w[R 2300 Error1],
-            %w[R 2301 Error2]
+            %w[R 2300 Msg1],
+            %w[R 2301 Msg2]
           ]
         end
 
@@ -144,6 +144,10 @@ module LensProtocol
 
           it '"R" records should be preceded by a corresponding TRCFMT' do
             expect { subject.parse 'R=2416;2410;2425;2429;2433' }.to raise_error ParsingError
+          end
+
+          it 'all lines should have the label separator' do
+            expect { subject.parse('A') }.to raise_error ParsingError
           end
         end
       end

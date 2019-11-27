@@ -3,7 +3,7 @@ module LensProtocol
   end
 
   class ParsingError < Error
-    def initialize line, msg
+    def initialize msg = 'Parsing failed', line = 'N/A'
       super "#{msg}\n  Line: #{line}"
     end
   end

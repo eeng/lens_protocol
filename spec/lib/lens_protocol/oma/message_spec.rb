@@ -7,9 +7,10 @@ module LensProtocol
           expect(message.value_of('JOB')).to eq 'X'
         end
 
-        it 'returns nil when the record is not present' do
+        it 'returns the default value when the record is not present' do
           message = Message.from_hash('JOB' => '123')
           expect(message.value_of('JOBx')).to eq nil
+          expect(message.value_of('JOBx', 'the default')).to eq 'the default'
           expect(message.value_of('')).to eq nil
         end
       end
@@ -108,6 +109,13 @@ module LensProtocol
           m2 = m1.only(%w[B])
           expect(m1.to_hash).to eq 'A' => 1, 'B' => 2
           expect(m2.to_hash).to eq 'B' => 2
+        end
+      end
+
+      context 'empty?' do
+        it 'returns true if it has no records' do
+          expect(Message.new).to be_empty
+          expect(Message.from_hash('A' => 1)).to_not be_empty
         end
       end
 

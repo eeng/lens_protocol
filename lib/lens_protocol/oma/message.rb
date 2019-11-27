@@ -43,13 +43,21 @@ module LensProtocol
         self
       end
 
-      def value_of label
-        @records[label].value if include? label
+      def value_of label, default = nil
+        if include? label
+          @records[label].value
+        else
+          default
+        end
       end
 
       # Returns +true+ if the message contains a record with the given label
       def include? label
         @records.key? label
+      end
+
+      def empty?
+        @records.empty?
       end
 
       def context key
