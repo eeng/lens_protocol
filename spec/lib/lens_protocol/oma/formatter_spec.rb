@@ -22,6 +22,14 @@ module LensProtocol
           expect(subject.format_lines(message, types: {'SPH' => Type::Integer.new(mode: :chiral)})).to eq %w[SPH=1;]
         end
 
+        it 'chiral records when only one value is given' do
+          message = Message.from_hash('LNAM' => 'X')
+          expect(subject.format_lines(message)).to eq %w[LNAM=X;X]
+
+          message = Message.from_hash('LNAM' => nil)
+          expect(subject.format_lines(message)).to eq %w[LNAM=;]
+        end
+
         it 'matrix_of_values records' do
           message = Message.from_hash('DRILLE' => [%w[B 1], %w[B 2]])
           expect(subject.format_lines(message)).to eq %w[DRILLE=B;1 DRILLE=B;2]

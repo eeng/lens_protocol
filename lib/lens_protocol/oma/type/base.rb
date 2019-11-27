@@ -29,8 +29,10 @@ module LensProtocol
           case @mode
           when :single_value
             format_line record.label, [format_value(record.value)]
-          when :array_of_values, :chiral
+          when :array_of_values
             format_line record.label, format_values(record.value)
+          when :chiral
+            format_line record.label, make_chiral(format_values(record.value))
           when :matrix_of_values
             record.value.map do |value|
               format_line record.label, format_values(value)
@@ -77,6 +79,7 @@ module LensProtocol
         end
 
         def format_values values
+          values = values.is_a?(Array) ? values : [values]
           values.map { |v| format_value(v) }
         end
       end
