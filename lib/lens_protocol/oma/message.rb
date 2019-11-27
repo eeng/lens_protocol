@@ -20,9 +20,15 @@ module LensProtocol
         self
       end
 
-      def add_record_values label, values
+      def add_record_or_insert_values label, values
         @records[label] ||= Record.new(label: label, value: [])
         @records[label].value << values
+        self
+      end
+
+      def add_record_or_concat_values label, values
+        @records[label] ||= Record.new(label: label, value: [])
+        @records[label].value.concat values
         self
       end
 

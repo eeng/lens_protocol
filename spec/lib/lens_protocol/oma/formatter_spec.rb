@@ -7,7 +7,7 @@ module LensProtocol
           expect(subject.format(message)).to eq "A=1\r\nB=2;3\r\n"
         end
 
-        it 'single-value numeric records' do
+        it 'single_value numeric records' do
           message = Message.from_hash('FTYPE' => 3)
           expect(subject.format_lines(message)).to eq %w[FTYPE=3]
 
@@ -22,7 +22,7 @@ module LensProtocol
           expect(subject.format_lines(message, types: {'SPH' => Type::Integer.new(mode: :chiral)})).to eq %w[SPH=1;]
         end
 
-        it 'multi-line records' do
+        it 'matrix_of_values records' do
           message = Message.from_hash('DRILLE' => [%w[B 1], %w[B 2]])
           expect(subject.format_lines(message)).to eq %w[DRILLE=B;1 DRILLE=B;2]
         end

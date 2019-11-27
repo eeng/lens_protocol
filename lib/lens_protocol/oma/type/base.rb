@@ -7,31 +7,31 @@ module LensProtocol
         end
 
         # Given a line and a message produces a new message with the record(s) corresponding to that line added to the message
+        # @return [Message]
         def parse line, message
           label, data = label_and_data line
           case @mode
           when :single_value
             message.add_record label, parse_value(data)
-          when :multi_value
-            message.add_record label, parse_values(data)
+          when :array_of_values
+            message.add_record_or_concat_values label, parse_values(data)
           when :chiral
             message.add_record label, make_chiral(parse_values(data))
-          when :multi_line
-            message.add_record_values label, parse_values(data)
+          when :matrix_of_values
+            message.add_record_or_insert_values label, parse_values(data)
           else
             raise ArgumentError, "Mode #{@mode} not supported"
           end
         end
 
-        # @param [Record]
         # @return [Array of lines or a single one]
         def format record, _message
           case @mode
           when :single_value
             format_line record.label, [format_value(record.value)]
-          when :multi_value, :chiral
+          when :array_of_values, :chiral
             format_line record.label, format_values(record.value)
-          when :multi_line
+          when :matrix_of_values
             record.value.map do |value|
               format_line record.label, format_values(value)
             end

@@ -7,7 +7,7 @@ module LensProtocol
           expect(message).to be_a(Message)
         end
 
-        it 'single-value text records' do
+        it 'single_value text records' do
           message = subject.parse('X=A', types: {'X' => Type::Text.new(mode: :single_value)})
           expect(message.value_of('X')).to eq 'A'
           message = subject.parse('X=A;B;C', types: {'X' => Type::Text.new(mode: :single_value)})
@@ -16,7 +16,7 @@ module LensProtocol
           expect(message.value_of('JOB')).to eq '123'
         end
 
-        it 'single-value numeric records' do
+        it 'single_value numeric records' do
           message = subject.parse <<~OMA
             FTYP=1
             ETYP=2
@@ -27,9 +27,18 @@ module LensProtocol
           expect(message.value_of('DBL')).to eq 1.25
         end
 
-        it 'multi-value text records' do
-          message = subject.parse('X=A;B;C', types: {'X' => Type::Text.new(mode: :multi_value)})
+        it 'array_of_values text records' do
+          message = subject.parse('X=A;B;C', types: {'X' => Type::Text.new(mode: :array_of_values)})
           expect(message.value_of('X')).to eq %w[A B C]
+        end
+
+        it 'array_of_values numeric record in múltiple lines' do
+          oma = <<~OMA
+            R=10;11;12
+            R=13;14;15
+          OMA
+          message = subject.parse(oma, types: {'R' => Type::Integer.new(mode: :array_of_values)})
+          expect(message.value_of('R')).to eq [10, 11, 12, 13, 14, 15]
         end
 
         it 'chiral text records' do
@@ -55,7 +64,7 @@ module LensProtocol
           expect(message.value_of('SPH')).to eq [1, 2]
         end
 
-        it 'multi-line records' do
+        it 'matrix_of_values records' do
           message = subject.parse <<~OMA
             XSTATUS=R;2300;Error1
             XSTATUS=R;2301;Error2
