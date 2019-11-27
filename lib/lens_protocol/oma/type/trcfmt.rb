@@ -9,11 +9,11 @@ module LensProtocol
         end
 
         def format record, message
-          record.value.select(&:any?).flat_map do |values|
+          Array(record.value).select { |v| v&.any? }.flat_map do |values|
             trcfmt_line = format_line(record.label, values)
 
             side = side_position_from_trcfmt values
-            r_lines = message.value_of('R')[side].each_slice(10).map do |group|
+            r_lines = message.value_of('R', [[], []])[side].each_slice(10).map do |group|
               format_line('R', group)
             end
 

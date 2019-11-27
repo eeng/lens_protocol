@@ -45,8 +45,8 @@ module LensProtocol
           message = subject.parse('LNAM=A;B')
           expect(message.value_of('LNAM')).to eq %w[A B]
 
-          message = subject.parse 'FWD=X'
-          expect(message.value_of('FWD')).to eq %w[X X]
+          message = subject.parse 'LNAM=X'
+          expect(message.value_of('LNAM')).to eq %w[X X]
         end
 
         it 'chiral numeric records' do

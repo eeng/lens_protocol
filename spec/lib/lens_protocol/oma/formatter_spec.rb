@@ -30,6 +30,11 @@ module LensProtocol
           expect(subject.format_lines(message)).to eq %w[SPH=;]
         end
 
+        it 'array_of_values records' do
+          message = Message.from_hash('VIEWP' => ['B', 650, 0, 19])
+          expect(subject.format_lines(message)).to eq %w[VIEWP=B;650;0;19]
+        end
+
         it 'matrix_of_values records' do
           message = Message.from_hash('DRILLE' => [%w[B 1], %w[B 2]])
           expect(subject.format_lines(message)).to eq %w[DRILLE=B;1 DRILLE=B;2]
@@ -92,6 +97,24 @@ module LensProtocol
               R=2542;2552;2561;2569;2575;2582;2588;2594;2599;2601
             ]
           end
+
+          it 'TRCFMT alone should not raise error' do
+            message = Message.from_hash('TRCFMT' => [[], %w[1 360 E L F]])
+            expect(subject.format_lines(message)).to eq %w[TRCFMT=1;360;E;L;F]
+          end
+
+          it 'empty TRCFMT should not raise error' do
+            message = Message.from_hash('TRCFMT' => nil)
+            expect(subject.format_lines(message)).to eq %w[]
+            message = Message.from_hash('TRCFMT' => [%w[1 360 E R F], nil])
+            expect(subject.format_lines(message)).to eq %w[TRCFMT=1;360;E;R;F]
+          end
+        end
+
+        it 'is posible to specify a start and end of message characters' do
+          oma = OMA.format(Message.from_hash('A' => 'B'), start_of_message: "\x1C", end_of_message: "\x1D\x04")
+          expect(oma[0]).to eq "\x1C"
+          expect(oma[-4..-1]).to eq "\x0D\x0A\x1D\x04"
         end
       end
     end
