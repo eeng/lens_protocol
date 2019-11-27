@@ -27,6 +27,11 @@ module LensProtocol
           expect(message.value_of('DBL')).to eq 1.25
         end
 
+        it 'should be able to parse as integer a decimal value' do
+          message = subject.parse('X=12.00', types: {'X' => Type::Integer.new})
+          expect(message.value_of('X')).to eq 12
+        end
+
         it 'array_of_values text records' do
           message = subject.parse('X=A;B;C', types: {'X' => Type::Text.new(mode: :array_of_values)})
           expect(message.value_of('X')).to eq %w[A B C]
@@ -62,6 +67,9 @@ module LensProtocol
 
           message = subject.parse 'SPH=1;2;3'
           expect(message.value_of('SPH')).to eq [1, 2]
+
+          message = subject.parse 'SPH='
+          expect(message.value_of('SPH')).to eq [nil, nil]
         end
 
         it 'matrix_of_values records' do
@@ -127,7 +135,7 @@ module LensProtocol
         it 'should preserve empty values' do
           expect(subject.parse('IPD=33;').value_of('IPD')).to eq [33, nil]
           expect(subject.parse('IPD=;33').value_of('IPD')).to eq [nil, 33]
-          expect(subject.parse('JOB=').value_of('JOB')).to eq nil
+          expect(subject.parse('JOB=').value_of('JOB')).to eq ''
         end
 
         it 'unknown values are converted to nil' do

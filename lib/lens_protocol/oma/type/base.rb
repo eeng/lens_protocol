@@ -45,7 +45,7 @@ module LensProtocol
         private
 
         def label_and_data line
-          label, data = line.split('=')
+          label, data = line.split('=', -1)
           [label, data]
         end
 
@@ -67,7 +67,7 @@ module LensProtocol
         end
 
         def make_chiral values
-          if values.size == 1
+          if values.size <= 1
             [values[0], values[0]]
           else
             values[0..1]
@@ -88,6 +88,7 @@ module LensProtocol
         end
 
         def format_chiral value
+          return [] if Array(value).compact.empty?
           make_chiral format_values value
         end
       end

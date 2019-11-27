@@ -3,7 +3,7 @@ module LensProtocol
     module Type
       class Integer < Base
         def parse_value value
-          Integer(value) rescue nil
+          Integer(value) rescue Float(value).round rescue nil
         end
 
         def format_value value

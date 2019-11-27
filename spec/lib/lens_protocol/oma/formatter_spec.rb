@@ -25,9 +25,20 @@ module LensProtocol
         it 'chiral records repeats their value when only one value is given' do
           message = Message.from_hash('LNAM' => 'X')
           expect(subject.format_lines(message)).to eq %w[LNAM=X;X]
+        end
+
+        it 'empty values on chiral records' do
+          message = Message.from_hash('SPH' => [nil, nil])
+          expect(subject.format_lines(message)).to eq %w[SPH=]
+
+          message = Message.from_hash('LNAM' => [nil, nil])
+          expect(subject.format_lines(message)).to eq %w[LNAM=]
 
           message = Message.from_hash('SPH' => nil)
-          expect(subject.format_lines(message)).to eq %w[SPH=;]
+          expect(subject.format_lines(message)).to eq %w[SPH=]
+
+          message = Message.from_hash('LNAM' => nil)
+          expect(subject.format_lines(message)).to eq %w[LNAM=]
         end
 
         it 'array_of_values records' do
