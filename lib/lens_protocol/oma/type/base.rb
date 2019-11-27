@@ -2,9 +2,8 @@ module LensProtocol
   module OMA
     module Type
       class Base
-        def initialize mode: :single_value, repeat_if_empty: false
+        def initialize mode: :single_value
           @mode = mode
-          @repeat_if_empty = repeat_if_empty
         end
 
         # Given a line and a message produces a new message with the record(s) corresponding to that line added to the message
@@ -89,9 +88,7 @@ module LensProtocol
         end
 
         def format_chiral value
-          values = format_values value
-          values = values.size == 2 && values.any?(&:nil?) && @repeat_if_empty ? values.compact : values
-          make_chiral values
+          make_chiral format_values value
         end
       end
     end
