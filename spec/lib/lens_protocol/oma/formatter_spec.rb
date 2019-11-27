@@ -122,10 +122,18 @@ module LensProtocol
           end
         end
 
-        it 'is posible to specify a start and end of message characters' do
-          oma = OMA.format(Message.from_hash('A' => 'B'), start_of_message: "\x1C", end_of_message: "\x1D\x04")
-          expect(oma[0]).to eq "\x1C"
-          expect(oma[-4..-1]).to eq "\x0D\x0A\x1D\x04"
+        context 'options' do
+          it 'is posible to specify a start and end of message characters' do
+            oma = OMA.format(Message.from_hash('A' => 'B'), start_of_message: "\x1C", end_of_message: "\x1D\x04")
+            expect(oma[0]).to eq "\x1C"
+            expect(oma[-4..-1]).to eq "\x0D\x0A\x1D\x04"
+          end
+
+          it 'without_empty_records' do
+            message = Message.from_hash('A' => nil)
+            expect(subject.format_lines(message)).to eq ['A=']
+            expect(subject.format_lines(message, without_empty_records: true)).to eq []
+          end
         end
       end
     end
