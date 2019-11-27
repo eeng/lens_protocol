@@ -2,8 +2,9 @@ module LensProtocol
   module OMA
     module Type
       class Base
-        def initialize mode: :single_value
+        def initialize mode: :single_value, repeat_if_empty: false
           @mode = mode
+          @repeat_if_empty = repeat_if_empty
         end
 
         # Given a line and a message produces a new message with the record(s) corresponding to that line added to the message
@@ -16,7 +17,7 @@ module LensProtocol
           when :array_of_values
             message.add_record_or_concat_values label, parse_values(data)
           when :chiral
-            message.add_record label, make_chiral(parse_values(data))
+            message.add_record label, parse_chiral(data)
           when :matrix_of_values
             message.add_record_or_insert_values label, parse_values(data)
           else
@@ -32,7 +33,7 @@ module LensProtocol
           when :array_of_values
             format_line record.label, format_values(record.value)
           when :chiral
-            format_line record.label, make_chiral(format_values(record.value))
+            format_line record.label, format_chiral(record.value)
           when :matrix_of_values
             record.value.map do |value|
               format_line record.label, format_values(value)
@@ -62,6 +63,10 @@ module LensProtocol
           value if value != '?'
         end
 
+        def parse_chiral values
+          make_chiral parse_values values
+        end
+
         def make_chiral values
           if values.size == 1
             [values[0], values[0]]
@@ -81,6 +86,12 @@ module LensProtocol
         def format_values values
           values = values.is_a?(Array) ? values : [values]
           values.map { |v| format_value(v) }
+        end
+
+        def format_chiral value
+          values = format_values value
+          values = values.size == 2 && values.any?(&:nil?) && @repeat_if_empty ? values.compact : values
+          make_chiral values
         end
       end
     end

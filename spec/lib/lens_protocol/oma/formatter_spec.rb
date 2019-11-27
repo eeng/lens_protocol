@@ -26,8 +26,19 @@ module LensProtocol
           message = Message.from_hash('LNAM' => 'X')
           expect(subject.format_lines(message)).to eq %w[LNAM=X;X]
 
-          message = Message.from_hash('LNAM' => nil)
-          expect(subject.format_lines(message)).to eq %w[LNAM=;]
+          message = Message.from_hash('SPH' => nil)
+          expect(subject.format_lines(message)).to eq %w[SPH=;]
+        end
+
+        it 'some chiral records must repeat its value on both sides even if only one is present' do
+          message = Message.from_hash('LNAM' => ['X', nil])
+          expect(subject.format_lines(message)).to eq %w[LNAM=X;X]
+
+          message = Message.from_hash('LNAM' => [nil, 'X'])
+          expect(subject.format_lines(message)).to eq %w[LNAM=X;X]
+
+          message = Message.from_hash('LNAM' => [nil, nil])
+          expect(subject.format_lines(message)).to eq %w[LNAM=]
         end
 
         it 'matrix_of_values records' do
