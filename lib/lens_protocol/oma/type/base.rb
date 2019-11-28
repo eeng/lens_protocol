@@ -88,7 +88,7 @@ module LensProtocol
         end
 
         def format_chiral value
-          return [] if Array(value).compact.empty?
+          return [] if Array(value).select(&:present?).empty?
           make_chiral format_values value
         end
       end

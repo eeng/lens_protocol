@@ -10,6 +10,10 @@ module LensProtocol
         @label = label
         @value = value
       end
+
+      def empty?
+        Array(value).select(&:present?).empty?
+      end
     end
   end
 end

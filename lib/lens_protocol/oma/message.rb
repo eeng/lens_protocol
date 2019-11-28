@@ -126,6 +126,10 @@ module LensProtocol
         Message.new records: @records.slice(*labels)
       end
 
+      def remove_empty_records
+        Message.new records: @records.reject { |_, r| r.empty? }
+      end
+
       def to_s
         OMA.format self
       end

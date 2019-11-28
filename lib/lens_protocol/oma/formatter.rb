@@ -11,13 +11,11 @@ module LensProtocol
         ].join
       end
 
-      def format_lines message, types: {}, without_empty_records: false
+      def format_lines message, types: {}
         types = TYPES.merge(types)
-        lines = message.records.values.flat_map do |record|
+        message.records.values.flat_map do |record|
           types[record.label].format(record, message)
         end
-        lines = lines.reject { |line| line.end_with?('=') } if without_empty_records
-        lines
       end
     end
   end

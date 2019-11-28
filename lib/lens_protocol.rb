@@ -1,3 +1,5 @@
+require 'active_support'
+require 'active_support/core_ext/object/blank'
 require 'nokogiri'
 require 'lens_protocol/version'
 require 'lens_protocol/errors'

@@ -112,6 +112,13 @@ module LensProtocol
         end
       end
 
+      context 'remove_empty_records' do
+        it 'removes records with no values' do
+          m = Message.from_hash('A' => [], 'B' => 1, 'C' => '')
+          expect(m.remove_empty_records.to_hash).to eq 'B' => 1
+        end
+      end
+
       context 'empty?' do
         it 'returns true if it has no records' do
           expect(Message.new).to be_empty

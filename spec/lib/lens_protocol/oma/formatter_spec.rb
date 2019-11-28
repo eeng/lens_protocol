@@ -128,12 +128,6 @@ module LensProtocol
             expect(oma[0]).to eq "\x1C"
             expect(oma[-4..-1]).to eq "\x0D\x0A\x1D\x04"
           end
-
-          it 'without_empty_records' do
-            message = Message.from_hash('A' => nil)
-            expect(subject.format_lines(message)).to eq ['A=']
-            expect(subject.format_lines(message, without_empty_records: true)).to eq []
-          end
         end
       end
     end
