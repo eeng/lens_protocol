@@ -8,19 +8,9 @@ Furthermore, it allows you to generate a SVG representation of the tracing datas
 
 ## Installation
 
-Add this line to your application's Gemfile:
-
 ```ruby
 gem 'lens_protocol'
 ```
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install lens_protocol
 
 ## Usage
 
@@ -32,7 +22,19 @@ message = LensProtocol::OMA.parse(File.read('examples/oma/R360_1.oma'))
 message.values_of('SPH') # => [1.25, -0.5]
 ```
 
-### Generating the tracing data SVG
+### Generating an OMA file
+```ruby
+message = LensProtocol::OMA.generate(
+  'JOB' => 42,
+  'SPH' => [1.25, -0.5]
+)
+puts message
+# =>
+# JOB=42
+# SPH=1.25;-0.50
+```
+
+### Generating the Tracing SVG
 
 The `message.to_svg` method returns an array of SVG strings, one for each side, which can be used directly in an ERB template, like this:
 

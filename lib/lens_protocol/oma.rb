@@ -7,6 +7,10 @@ module LensProtocol
       Parser.new.parse *args
     end
 
+    def generate *args
+      Message.from_hash *args
+    end
+
     def format *args
       Formatter.new.format *args
     end
