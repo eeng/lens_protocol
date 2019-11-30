@@ -72,8 +72,7 @@ module LensProtocol
       def radius_data
         return [] unless value_of('TRCFMT') && value_of('R')
         [0, 1].map do |side|
-          format_number, = value_of('TRCFMT')[side]
-          case format_number.to_i
+          case Type::Trcfmt.number(value_of('TRCFMT')[side])
           when 0 # side not present
             []
           when 1 # ASCII format

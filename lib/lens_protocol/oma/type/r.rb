@@ -4,8 +4,9 @@ module LensProtocol
       class R < Base
         def parse line, message
           label, values = label_and_values line
-          side = message.context(:last_trcfmt_side) or raise ParsingError.new('Could not found a corresponding TRCFMT record', line)
-          message.add_record_side_values(label, side, values.map(&:to_i))
+          trcfmt = message.context(:last_trcfmt) or raise ParsingError.new('Could not found a corresponding TRCFMT record', line)
+          values = Trcfmt.number(trcfmt) == 1 ? values.map(&:to_i) : values
+          message.add_record_side_values(label, Trcfmt.side_pos(trcfmt), values)
         end
 
         def format _record, _message

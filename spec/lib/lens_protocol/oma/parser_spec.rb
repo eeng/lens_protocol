@@ -85,7 +85,7 @@ module LensProtocol
         end
 
         context 'parsing of tracing datasets' do
-          it 'when both sides are present' do
+          it 'when both sides are present, right first and then left' do
             message = subject.parse <<~OMA
               TRCFMT=1;10;E;R;P
               R=2416;2410;2425;2429;2433
@@ -93,6 +93,28 @@ module LensProtocol
               TRCFMT=1;10;E;L;P
               R=2476;2478;2481;2483;2486
               R=2503;2506;2510;2513;2516
+            OMA
+
+            expect(message.to_hash).to eq(
+              'TRCFMT' => [
+                %w[1 10 E R P],
+                %w[1 10 E L P]
+              ],
+              'R' => [
+                [2416, 2410, 2425, 2429, 2433, 2459, 2464, 2469, 2473, 2478],
+                [2476, 2478, 2481, 2483, 2486, 2503, 2506, 2510, 2513, 2516]
+              ]
+            )
+          end
+
+          it 'when both sides are present, left first and then right' do
+            message = subject.parse <<~OMA
+              TRCFMT=1;10;E;L;P
+              R=2476;2478;2481;2483;2486
+              R=2503;2506;2510;2513;2516
+              TRCFMT=1;10;E;R;P
+              R=2416;2410;2425;2429;2433
+              R=2459;2464;2469;2473;2478
             OMA
 
             expect(message.to_hash).to eq(
@@ -124,6 +146,19 @@ module LensProtocol
                 []
               ]
             )
+          end
+
+          it 'should store the raw data when the tracing format is unknown' do
+            message = subject.parse <<~OMA
+              TRCFMT=6;360;E;R;F
+              R=49675141414A4E436A654671314C2F355A564A423776324A4439...
+              TRCFMT=6;360;E;L;F
+              R=4B675141414838754E347A4F6352316269616D67344D372F6C79...
+            OMA
+            expect(message.to_hash['R']).to eq([
+              %w[49675141414A4E436A654671314C2F355A564A423776324A4439...],
+              %w[4B675141414838754E347A4F6352316269616D67344D372F6C79...]
+            ])
           end
         end
 
