@@ -160,6 +160,10 @@ module LensProtocol
               %w[4B675141414838754E347A4F6352316269616D67344D372F6C79...]
             ])
           end
+
+          it '"R" records without its corresponding TRCFMT are ignored' do
+            expect(subject.parse('R=2416;2410;2425;2429;2433').include?('R')).to eq false
+          end
         end
 
         it 'should tolerate different line separators' do
@@ -183,10 +187,6 @@ module LensProtocol
           it 'nil and empty messages' do
             expect(subject.parse(nil).to_hash).to be_empty
             expect(subject.parse('').to_hash).to be_empty
-          end
-
-          it '"R" records should be preceded by a corresponding TRCFMT' do
-            expect { subject.parse 'R=2416;2410;2425;2429;2433' }.to raise_error ParsingError
           end
 
           it 'all lines should have the label separator' do
