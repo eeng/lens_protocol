@@ -12,6 +12,7 @@ module LensProtocol
 
       def parse_line line, message, types
         raise ParsingError.new('The label separator is missing', line) unless line.include?('=')
+
         label, = line.split('=')
         types[label].parse(line, message)
       end

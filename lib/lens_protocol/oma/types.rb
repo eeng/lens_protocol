@@ -78,7 +78,7 @@ module LensProtocol
       '_PRVA1' => Type::Integer.new(mode: :chiral),
       '_PRVA2' => Type::Integer.new(mode: :chiral),
       '_PRVM1' => Type::Numeric.new(mode: :chiral, decimals: 1),
-      '_PRVM2' => Type::Numeric.new(mode: :chiral, decimals: 1),
+      '_PRVM2' => Type::Numeric.new(mode: :chiral, decimals: 1)
     )
   end
 end

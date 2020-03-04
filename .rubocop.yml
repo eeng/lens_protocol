@@ -55,24 +55,30 @@ Style/MutableConstant:
 Style/RescueModifier:
   Enabled: false
 
+Layout/LineLength:
+  Max: 120
+
 Layout/SpaceInsideHashLiteralBraces:
   Enabled: false
 
 Layout/MultilineMethodCallIndentation:
   Enabled: false
 
-Layout/TrailingBlankLines:
+Layout/TrailingEmptyLines:
   Enabled: false
 
-Layout/IndentArray:
+Layout/FirstArrayElementIndentation:
   EnforcedStyle: consistent
 
-Layout/AlignParameters:
+Layout/ParameterAlignment:
   EnforcedStyle: with_fixed_indentation
 
 Layout/SpaceInLambdaLiteral:
   Enabled: false
 
+Layout/EmptyLineAfterGuardClause:
+  Enabled: false
+  
 Metrics:
   Enabled: false
 
@@ -92,7 +98,4 @@ Lint/AmbiguousOperator:
   Enabled: false
 
 Lint/AmbiguousBlockAssociation:
-  Enabled: false
-
-Naming/UncommunicativeMethodParamName:
   Enabled: false
