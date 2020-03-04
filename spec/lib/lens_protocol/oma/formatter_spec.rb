@@ -3,11 +3,11 @@ module LensProtocol
     RSpec.describe Formatter do
       context 'format' do
         it 'generates the OMA formatted string with the Windows line endings' do
-          message = Message.from_hash('A' => 1, 'B' => [2, 3])
-          expect(subject.format(message)).to eq "A=1\r\nB=2;3\r\n"
+          message = Message.from_hash('A' => 1, 'B' => 2)
+          expect(subject.format(message)).to eq "A=1\r\nB=2\r\n"
         end
 
-        it 'single_value numeric records' do
+        it 'single value numeric records' do
           message = Message.from_hash('FTYPE' => 3)
           expect(subject.format_lines(message)).to eq %w[FTYPE=3]
 
@@ -18,13 +18,10 @@ module LensProtocol
         it 'chiral numeric records' do
           message = Message.from_hash('SPH' => [1.251, nil])
           expect(subject.format_lines(message)).to eq %w[SPH=1.25;]
-          expect(subject.format_lines(message, types: {'SPH' => Type::Numeric.new(decimals: 1, mode: :chiral)})).to eq %w[SPH=1.3;]
-          expect(subject.format_lines(message, types: {'SPH' => Type::Integer.new(mode: :chiral)})).to eq %w[SPH=1;]
-        end
-
-        it 'chiral records repeats their value when only one value is given' do
-          message = Message.from_hash('LNAM' => 'X')
-          expect(subject.format_lines(message)).to eq %w[LNAM=X;X]
+          expect(subject.format_lines(message, types: {'SPH' => Types::Chiral.new(value_type: :numeric, decimals: 1)}))
+            .to eq %w[SPH=1.3;]
+          expect(subject.format_lines(message, types: {'SPH' => Types::Chiral.new(value_type: :integer)}))
+            .to eq %w[SPH=1;]
         end
 
         it 'empty values on chiral records' do
@@ -41,12 +38,12 @@ module LensProtocol
           expect(subject.format_lines(message)).to eq %w[LNAM=]
         end
 
-        it 'array_of_values records' do
+        it 'array of value records' do
           message = Message.from_hash('VIEWP' => ['B', 650, 0, 19])
           expect(subject.format_lines(message)).to eq %w[VIEWP=B;650;0;19]
         end
 
-        it 'matrix_of_values records' do
+        it 'matrix of value records' do
           message = Message.from_hash('DRILLE' => [%w[B 1], %w[B 2]])
           expect(subject.format_lines(message)).to eq %w[DRILLE=B;1 DRILLE=B;2]
         end
@@ -73,8 +70,8 @@ module LensProtocol
 
           it 'only right side' do
             message = Message.from_hash(
-              'TRCFMT' => [%w[1 360 E R F], []],
-              'R' => [[2416, 2410, 2425, 2429], []]
+              'TRCFMT' => [%w[1 360 E R F], nil],
+              'R' => [[2416, 2410, 2425, 2429], nil]
             )
             expect(subject.format_lines(message)).to eq %w[
               TRCFMT=1;360;E;R;F
@@ -84,8 +81,8 @@ module LensProtocol
 
           it 'only left side' do
             message = Message.from_hash(
-              'TRCFMT' => [[], %w[1 360 E L F]],
-              'R' => [[], [2416, 2410, 2425, 2429]]
+              'TRCFMT' => [nil, %w[1 360 E L F]],
+              'R' => [nil, [2416, 2410, 2425, 2429]]
             )
             expect(subject.format_lines(message)).to eq %w[
               TRCFMT=1;360;E;L;F
@@ -107,18 +104,6 @@ module LensProtocol
               R=2412;2424;2436;2449;2462;2475;2489;2502;2516;2530
               R=2542;2552;2561;2569;2575;2582;2588;2594;2599;2601
             ]
-          end
-
-          it 'TRCFMT alone should not raise error' do
-            message = Message.from_hash('TRCFMT' => [[], %w[1 360 E L F]])
-            expect(subject.format_lines(message)).to eq %w[TRCFMT=1;360;E;L;F]
-          end
-
-          it 'empty TRCFMT should not raise error' do
-            message = Message.from_hash('TRCFMT' => nil)
-            expect(subject.format_lines(message)).to eq %w[]
-            message = Message.from_hash('TRCFMT' => [%w[1 360 E R F], nil])
-            expect(subject.format_lines(message)).to eq %w[TRCFMT=1;360;E;R;F]
           end
         end
 

@@ -1,23 +1,25 @@
 module LensProtocol
   RSpec.describe OMA do
-    it 'parse(format(parse(file))) == parse(file)' do
-      Dir['examples/oma/*.oma'].each do |filename|
-        file = File.read(filename)
-        expect(OMA.parse(OMA.format(OMA.parse(file))).to_hash).to eq OMA.parse(file).to_hash
-      end
+    it 'parsing and formatting should return the same original content' do
+      assert_parse_and_format_cosistent 'R360_1'
+      assert_parse_and_format_cosistent 'R360_2'
+      assert_parse_and_format_cosistent 'R1000_1', types: {
+        'DBL' => OMA::Types::Single.new(value_type: :integer),
+        'ZTILT' => OMA::Types::Single.new(value_type: :integer)
+      }
+      assert_parse_and_format_cosistent 'R1000_2', types: {
+        'DBL' => OMA::Types::Single.new(value_type: :integer),
+        'ZTILT' => OMA::Types::Single.new(value_type: :integer)
+      }
+      assert_parse_and_format_cosistent 'TRCFMT6', types: {
+        'DBL' => OMA::Types::Single.new(value_type: :numeric, decimals: 2),
+        'BEVM' => OMA::Types::Chiral.new(value_type: :numeric, decimals: 2)
+      }
     end
 
-    it 'file == format(parse(file))' do
-      file = File.read('examples/oma/TRCFMT6.oma')
-      result = OMA.format(OMA.parse(file),
-        types: {
-          'DBL' => OMA::Type::Numeric.new(decimals: 2),
-          'BEVM' => OMA::Type::Numeric.new(decimals: 2, mode: :chiral)
-        })
-      expect(nle(result)).to eq nle(file)
-
-      file = File.read('examples/oma/R360_1.oma')
-      result = OMA.format(OMA.parse(file))
+    def assert_parse_and_format_cosistent filename, types: {}
+      file = File.read("examples/oma/#{filename}.oma")
+      result = OMA.format(OMA.parse(file, types: types), types: types)
       expect(nle(result)).to eq nle(file)
     end
 

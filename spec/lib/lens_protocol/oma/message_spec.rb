@@ -16,20 +16,6 @@ module LensProtocol
       end
 
       context 'tracing_in_polar_coordinates' do
-        it 'should convert the "R" datasets to polar coordinates with the radiuses' do
-          message = Message.from_hash(
-            'TRCFMT' => [[1], [1]],
-            'R' => [
-              [2416, 2410, 2425, 2429], # right side
-              [2476, 2478, 2481, 2483]  # left side
-            ]
-          )
-          expect(message.tracing_in_polar_coordinates).to eq [
-            [[0, 2416], [Math::PI / 2, 2410], [Math::PI, 2425], [Math::PI * 3 / 2, 2429]],
-            [[0, 2476], [Math::PI / 2, 2478], [Math::PI, 2481], [Math::PI * 3 / 2, 2483]]
-          ]
-        end
-
         it 'when only one side is present' do
           message = OMA.parse <<~OMA
             TRCFMT=1;2;E;L;F
@@ -50,27 +36,13 @@ module LensProtocol
             TRCFMT=6;360;E;R;F
             R=6167514141436D71
           OMA
-          expect(message.tracing_in_polar_coordinates).to eq []
+          expect(message.tracing_in_polar_coordinates).to eq [[], []]
         end
       end
 
       context 'tracing_in_rectangular_coordinates' do
-        it 'should convert the "R" datasets to rectangular coordinates' do
-          message = Message.from_hash(
-            'TRCFMT' => [[1], [1]],
-            'R' => [
-              [2416, 2410, 2425, 2429],
-              [2476, 2478, 2481, 2483]
-            ]
-          )
-          expect(message.tracing_in_rectangular_coordinates).to eq [
-            [[2416, 0], [0, 2410], [-2425, 0], [0, -2429]],
-            [[2476, 0], [0, 2478], [-2481, 0], [0, -2483]]
-          ]
-        end
-
         it 'when only one side is present' do
-          message = Message.from_hash('TRCFMT' => [[1], []], 'R' => [[2416, 2425], []])
+          message = Message.from_hash('TRCFMT' => [%w[1 2 E R F], nil], 'R' => [[2416, 2425], nil])
           expect(message.tracing_in_rectangular_coordinates).to eq [
             [[2416, 0], [-2425, 0]],
             []
@@ -114,7 +86,7 @@ module LensProtocol
 
       context 'remove_empty_records' do
         it 'removes records with no values' do
-          m = Message.from_hash('A' => [], 'B' => 1, 'C' => '')
+          m = Message.from_hash('VIEWP' => [], 'B' => 1, 'C' => '')
           expect(m.remove_empty_records.to_hash).to eq 'B' => 1
         end
       end

@@ -7,4 +7,7 @@ module LensProtocol
       super "#{msg}\n  Line: #{line}"
     end
   end
+
+  class ValidationError < Error
+  end
 end

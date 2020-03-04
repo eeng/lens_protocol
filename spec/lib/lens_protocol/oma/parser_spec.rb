@@ -7,16 +7,16 @@ module LensProtocol
           expect(message).to be_a(Message)
         end
 
-        it 'single_value text records' do
-          message = subject.parse('X=A', types: {'X' => Type::Text.new(mode: :single_value)})
+        it 'single value text records' do
+          message = subject.parse('X=A', types: {'X' => Types::Single.new})
           expect(message.value_of('X')).to eq 'A'
-          message = subject.parse('X=A;B;C', types: {'X' => Type::Text.new(mode: :single_value)})
+          message = subject.parse('X=A;B;C', types: {'X' => Types::Single.new})
           expect(message.value_of('X')).to eq 'A;B;C'
           message = subject.parse('JOB=123')
           expect(message.value_of('JOB')).to eq '123'
         end
 
-        it 'single_value numeric records' do
+        it 'single value numeric records' do
           message = subject.parse <<~OMA
             FTYP=1
             ETYP=2
@@ -28,22 +28,18 @@ module LensProtocol
         end
 
         it 'should be able to parse as integer a decimal value' do
-          message = subject.parse('X=12.00', types: {'X' => Type::Integer.new})
+          message = subject.parse('X=12.00', types: {'X' => Types::Single.new(value_type: :integer)})
           expect(message.value_of('X')).to eq 12
         end
 
-        it 'array_of_values text records' do
-          message = subject.parse('X=A;B;C', types: {'X' => Type::Text.new(mode: :array_of_values)})
+        it 'array of text values records' do
+          message = subject.parse('X=A;B;C', types: {'X' => Types::Array.new})
           expect(message.value_of('X')).to eq %w[A B C]
         end
 
-        it 'array_of_values numeric record in múltiple lines' do
-          oma = <<~OMA
-            R=10;11;12
-            R=13;14;15
-          OMA
-          message = subject.parse(oma, types: {'R' => Type::Integer.new(mode: :array_of_values)})
-          expect(message.value_of('R')).to eq [10, 11, 12, 13, 14, 15]
+        it 'array of numeric values' do
+          message = subject.parse('R=10;11;12', types: {'R' => Types::Array.new(value_type: :integer)})
+          expect(message.value_of('R')).to eq [10, 11, 12]
         end
 
         it 'chiral text records' do
@@ -72,7 +68,7 @@ module LensProtocol
           expect(message.value_of('SPH')).to eq [nil, nil]
         end
 
-        it 'matrix_of_values records' do
+        it 'matrix of values records' do
           message = subject.parse <<~OMA
             XSTATUS=R;2300;Msg1
             XSTATUS=R;2301;Msg2
@@ -95,38 +91,25 @@ module LensProtocol
               R=2503;2506;2510;2513;2516
             OMA
 
-            expect(message.to_hash).to eq(
-              'TRCFMT' => [
-                %w[1 10 E R P],
-                %w[1 10 E L P]
-              ],
-              'R' => [
-                [2416, 2410, 2425, 2429, 2433, 2459, 2464, 2469, 2473, 2478],
-                [2476, 2478, 2481, 2483, 2486, 2503, 2506, 2510, 2513, 2516]
-              ]
-            )
+            right_side, left_side = message.value_of('TRCFMT')
+            expect(right_side.radius_data).to eq [2416, 2410, 2425, 2429, 2433, 2459, 2464, 2469, 2473, 2478]
+            expect(left_side.radius_data).to eq [2476, 2478, 2481, 2483, 2486, 2503, 2506, 2510, 2513, 2516]
           end
 
-          it 'when both sides are present, left first and then right' do
+          it 'when both sides are present, left first and then right, and there is another record in between' do
             message = subject.parse <<~OMA
               TRCFMT=1;10;E;L;P
               R=2476;2478;2481;2483;2486
               R=2503;2506;2510;2513;2516
+              _BLANK=...
               TRCFMT=1;10;E;R;P
               R=2416;2410;2425;2429;2433
               R=2459;2464;2469;2473;2478
             OMA
 
-            expect(message.to_hash).to eq(
-              'TRCFMT' => [
-                %w[1 10 E R P],
-                %w[1 10 E L P]
-              ],
-              'R' => [
-                [2416, 2410, 2425, 2429, 2433, 2459, 2464, 2469, 2473, 2478],
-                [2476, 2478, 2481, 2483, 2486, 2503, 2506, 2510, 2513, 2516]
-              ]
-            )
+            right_side, left_side = message.value_of('TRCFMT')
+            expect(right_side.radius_data).to eq [2416, 2410, 2425, 2429, 2433, 2459, 2464, 2469, 2473, 2478]
+            expect(left_side.radius_data).to eq [2476, 2478, 2481, 2483, 2486, 2503, 2506, 2510, 2513, 2516]
           end
 
           it 'when only one side is present' do
@@ -136,16 +119,19 @@ module LensProtocol
               R=2459;2464;2469;2473;2478
             OMA
 
-            expect(message.to_hash).to eq(
-              'TRCFMT' => [
-                %w[1 10 E R P],
-                %w[]
-              ],
-              'R' => [
-                [2416, 2410, 2425, 2429, 2433, 2459, 2464, 2469, 2473, 2478],
-                []
-              ]
-            )
+            right_side, left_side = message.value_of('TRCFMT')
+            expect(right_side.radius_data).to eq [2416, 2410, 2425, 2429, 2433, 2459, 2464, 2469, 2473, 2478]
+            expect(left_side).to eq nil
+
+            message = subject.parse <<~OMA
+              TRCFMT=1;10;E;L;P
+              R=2416;2410;2425;2429;2433
+              R=2459;2464;2469;2473;2478
+            OMA
+
+            right_side, left_side = message.value_of('TRCFMT')
+            expect(right_side).to eq nil
+            expect(left_side.radius_data).to eq [2416, 2410, 2425, 2429, 2433, 2459, 2464, 2469, 2473, 2478]
           end
 
           it 'should store the raw data when the tracing format is unknown' do
@@ -155,14 +141,37 @@ module LensProtocol
               TRCFMT=6;360;E;L;F
               R=4B675141414838754E347A4F6352316269616D67344D372F6C79...
             OMA
-            expect(message.to_hash['R']).to eq([
-              %w[49675141414A4E436A654671314C2F355A564A423776324A4439...],
-              %w[4B675141414838754E347A4F6352316269616D67344D372F6C79...]
-            ])
+
+            right_side, left_side = message.value_of('TRCFMT')
+            expect(right_side.radius_data).to eq %w[49675141414A4E436A654671314C2F355A564A423776324A4439...]
+            expect(left_side.radius_data).to eq %w[4B675141414838754E347A4F6352316269616D67344D372F6C79...]
           end
 
-          it '"R" records without its corresponding TRCFMT are ignored' do
+          it 'should not store the R value directly on the message' do
+            message = subject.parse <<~OMA
+              TRCFMT=1;10;E;R;P
+              R=2416;2410;2425;2429;2433
+              R=2459;2464;2469;2473;2478
+            OMA
+
+            expect(message.include?('R')).to be false
+          end
+
+          it 'R records without its corresponding TRCFMT are ignored' do
             expect(subject.parse('R=2416;2410;2425;2429;2433').include?('R')).to eq false
+          end
+
+          it 'should not mix R records of other datasets' do
+            message = subject.parse <<~OMA
+              TRCFMT=1;10;E;R;P
+              R=2416;2410;2425;2429;2433
+              R=2459;2464;2469;2473;2478
+              STHKFMT=1;4;E;R
+              R=2574;2659;2745;2838
+            OMA
+
+            right_side, = message.value_of('TRCFMT')
+            expect(right_side.radius_data).to eq [2416, 2410, 2425, 2429, 2433, 2459, 2464, 2469, 2473, 2478]
           end
         end
 

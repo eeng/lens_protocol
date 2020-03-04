@@ -19,7 +19,7 @@ gem 'lens_protocol'
 ```ruby
 require 'lens_protocol'
 message = LensProtocol::OMA.parse(File.read('examples/oma/R360_1.oma'))
-message.values_of('SPH') # => [1.25, -0.5]
+message.value_of('SPH') # => [1.25, -0.5]
 ```
 
 ### Generating an OMA file

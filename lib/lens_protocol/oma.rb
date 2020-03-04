@@ -8,7 +8,7 @@ module LensProtocol
     end
 
     def generate *args
-      Message.from_hash *args
+      Builder.new.build *args
     end
 
     def format *args

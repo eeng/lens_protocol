@@ -13,9 +13,17 @@ module LensProtocol
 
       def format_lines message, types: {}
         types = TYPES.merge(types)
-        message.records.values.flat_map do |record|
-          types[record.label].format(record, message)
+        message.records.flat_map do |label, record|
+          format_record label, record.value, types
         end
+      end
+
+      private
+
+      def format_record label, value, types
+        lines = types[label].format(label, value)
+        lines = lines.is_a?(Array) ? lines : [lines]
+        lines.map &:to_s
       end
     end
   end

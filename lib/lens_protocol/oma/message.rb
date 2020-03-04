@@ -4,42 +4,16 @@ module LensProtocol
       attr_reader :records
 
       # Builds a message from a hash of record labels to record value.
-      def self.from_hash hash
-        hash.reduce new do |message, (label, value)|
-          message.add_record(label, value)
-        end
+      def self.from_hash *args
+        OMA.generate *args
       end
 
-      def initialize records: {}, context: {}
+      def initialize records: {}
         @records = records
-        @context = context
       end
 
       def add_record label, value
         @records[label] ||= Record.new(label: label, value: value)
-        self
-      end
-
-      def add_record_or_insert_values label, values
-        @records[label] ||= Record.new(label: label, value: [])
-        @records[label].value << values
-        self
-      end
-
-      def add_record_or_concat_values label, values
-        @records[label] ||= Record.new(label: label, value: [])
-        @records[label].value.concat values
-        self
-      end
-
-      def add_record_side_values label, side, values
-        @records[label] ||= Record.new(label: label, value: [[], []])
-        @records[label].value[side].concat values
-        self
-      end
-
-      def set_context key, value
-        @context[key] = value
         self
       end
 
@@ -60,45 +34,18 @@ module LensProtocol
         @records.empty?
       end
 
-      def context key
-        @context[key]
-      end
-
       def to_hash
         Hash[*@records.flat_map { |label, record| [label, record.value] }]
       end
 
-      # Returns the "R" reconds decoded radiuses according to the tracing format.
-      def radius_data
-        return [] unless value_of('TRCFMT') && value_of('R')
-        [0, 1].map do |side|
-          case Type::Trcfmt.number(value_of('TRCFMT')[side])
-          when 0 # side not present
-            []
-          when 1 # ASCII format
-            value_of('R')[side]
-          else # unknown format
-            return []
-          end
-        end
-      end
-
       # Converts the "R" record values to polar coordinates.
       def tracing_in_polar_coordinates
-        radius_data.map { |radiuses| radiuses_to_polar radiuses }
-      end
-
-      def radiuses_to_polar radiuses
-        radiuses.map.with_index { |r, i| [i * 2 * Math::PI / radiuses.size, r] }
+        value_of('TRCFMT', []).map { |tracing_dataset| tracing_dataset&.in_polar_coordinates || [] }
       end
 
       # Converts the "R" record values to rectangular coordinates.
       def tracing_in_rectangular_coordinates
-        radius_data.map { |radiuses| radiuses_to_rectangular radiuses }
-      end
-
-      def radiuses_to_rectangular radiuses
-        radiuses_to_polar(radiuses).map { |(a, r)| [r * Math.cos(a), r * Math.sin(a)].map { |v| v.round 2 } }
+        value_of('TRCFMT', []).map { |tracing_dataset| tracing_dataset&.in_rectangular_coordinates || [] }
       end
 
       # Returns an array of SVG strings, one for each side. If the tracing format is not recognized
