@@ -55,6 +55,15 @@ Style/MutableConstant:
 Style/RescueModifier:
   Enabled: false
 
+Style/HashEachMethods:
+  Enabled: false
+  
+Style/HashTransformKeys:
+  Enabled: false
+  
+Style/HashTransformValues:
+  Enabled: false
+
 Layout/LineLength:
   Max: 120
 
@@ -76,9 +85,6 @@ Layout/ParameterAlignment:
 Layout/SpaceInLambdaLiteral:
   Enabled: false
 
-Layout/EmptyLineAfterGuardClause:
-  Enabled: false
-  
 Metrics:
   Enabled: false
 
@@ -98,4 +104,7 @@ Lint/AmbiguousOperator:
   Enabled: false
 
 Lint/AmbiguousBlockAssociation:
+  Enabled: false
+
+Naming/MethodParameterName:
   Enabled: false
