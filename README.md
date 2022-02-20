@@ -4,7 +4,7 @@ A Ruby parser and builder for the OMA protocol (a.k.a. Data Communication Standa
 
 Furthermore, it allows you to generate a SVG representation of the tracing datasets.
 
-[![Build Status](https://travis-ci.org/eeng/lens_protocol.svg?branch=master)](https://travis-ci.org/eeng/lens_protocol)
+[![Build Status](https://app.travis-ci.com/eeng/lens_protocol.svg?branch=master)](https://app.travis-ci.com/eeng/lens_protocol)
 
 ## Installation
 
